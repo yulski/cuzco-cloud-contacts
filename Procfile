@@ -1,1 +1,1 @@
-web: gradlew run
+web: java -jar build/libs/cuzco-cloud-contacts-0.0.0.jar
