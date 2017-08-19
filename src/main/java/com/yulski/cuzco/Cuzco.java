@@ -1,5 +1,6 @@
 package com.yulski.cuzco;
 
+import com.yulski.cuzco.env.Env;
 import spark.ModelAndView;
 import spark.template.jtwig.JtwigTemplateEngine;
 import spark.Request;
@@ -15,20 +16,12 @@ public class Cuzco {
     private static final JtwigTemplateEngine jtwigEngine = new JtwigTemplateEngine("/templates");
 
     public static void main(String[] args) {
-        port(getPortNumber());
+        port(Env.getPort());
         get("/", (Request request, Response response) -> {
             HashMap<String, Object> model = new HashMap<>();
-            model.put("projectName", "Cuzco222");
+            model.put("projectName", "Cuzco");
             return jtwigEngine.render(new ModelAndView(model, "index.twig"));
         });
-    }
-
-    private static int getPortNumber() {
-        ProcessBuilder processBuilder = new ProcessBuilder();
-        if (processBuilder.environment().get("PORT") != null) {
-            return Integer.parseInt(processBuilder.environment().get("PORT"));
-        }
-        return 4567;
     }
 
 }
