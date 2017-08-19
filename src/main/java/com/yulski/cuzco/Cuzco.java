@@ -10,7 +10,7 @@ import java.util.HashMap;
 import static spark.Spark.get;
 import static spark.Spark.port;
 
-public class Hello {
+public class Cuzco {
 
     private static final JtwigTemplateEngine jtwigEngine = new JtwigTemplateEngine("/templates");
 
@@ -18,7 +18,7 @@ public class Hello {
         port(getPortNumber());
         get("/", (Request request, Response response) -> {
             HashMap<String, Object> model = new HashMap<>();
-            model.put("projectName", "Cuzco");
+            model.put("projectName", "Cuzco222");
             return jtwigEngine.render(new ModelAndView(model, "index.twig"));
         });
     }
