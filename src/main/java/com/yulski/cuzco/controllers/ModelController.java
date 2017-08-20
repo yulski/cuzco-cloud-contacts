@@ -2,28 +2,30 @@ package com.yulski.cuzco.controllers;
 
 import com.yulski.cuzco.models.Model;
 import com.yulski.cuzco.services.Service;
+import spark.Request;
+import spark.Response;
 import spark.template.jtwig.JtwigTemplateEngine;
 
-public abstract class ModelController<T extends Model> {
-
-    protected JtwigTemplateEngine jtwigEngine;
-    // TODO if there's something for HTML (JTwig engine), there should be something for JSON (Jackson? or own service?)
-    protected Service<T> service;
+public abstract class ModelController<T extends Model, V extends Service<T>> extends Controller {
 
     public ModelController(JtwigTemplateEngine jtwigEngine) {
-        this.jtwigEngine = jtwigEngine;
+        super(jtwigEngine);
     }
 
-    public abstract String getOne(int id);
+    protected V service = getService();
 
-    public abstract String getEditForm(int id);
+    public abstract String getOne(Request request, Response response);
 
-    public abstract String edit(int id);
+    public abstract String getEditForm(Request request, Response response);
 
-    public abstract String getCreateForm();
+    public abstract String edit(Request request, Response response);
 
-    public abstract String create(T t);
+    public abstract String getCreateForm(Request request, Response response);
 
-    public abstract String delete(int id);
+    public abstract String create(Request request, Response response);
+
+    public abstract String delete(Request request, Response response);
+
+    protected abstract V getService();
 
 }

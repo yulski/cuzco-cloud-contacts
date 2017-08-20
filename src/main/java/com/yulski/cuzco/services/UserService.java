@@ -36,6 +36,26 @@ public class UserService implements Service<User> {
         return null;
     }
 
+    public User getOneByEmail(String email) {
+        Connection connection = db.getConnection();
+        String sql = "SELECT * FROM " + User.Contract.TABLE_NAME +
+                " WHERE " + User.Contract.EMAIL_COLUMN + " = ? LIMIT 1";
+        try {
+            PreparedStatement statement = connection.prepareStatement(sql);
+            statement.setString(1, email);
+            logger.info("UserService executing query: '" + sql + "'");
+            ResultSet resultSet = statement.executeQuery();
+            return User.builder()
+                    .id(resultSet.getInt(User.Contract.ID_COLUMN))
+                    .email(resultSet.getString(User.Contract.EMAIL_COLUMN))
+                    .password(resultSet.getString(User.Contract.PASSWORD_COLUMN))
+                    .build();
+        } catch(SQLException e) {
+            logger.error(e.getMessage(), e);
+        }
+        return null;
+    }
+
     @Override
     public List<User> getAll() {
         Connection connection = db.getConnection();
@@ -106,5 +126,10 @@ public class UserService implements Service<User> {
             logger.error(e.getMessage(), e);
         }
         return false;
+    }
+
+    public boolean authenticate(String email, String password) {
+        User user = getOneByEmail(email);
+        return user != null && user.getPassword().equals(password);
     }
 }

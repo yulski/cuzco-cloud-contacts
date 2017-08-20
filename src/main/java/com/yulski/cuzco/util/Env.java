@@ -1,4 +1,4 @@
-package com.yulski.cuzco.env;
+package com.yulski.cuzco.util;
 
 import java.util.HashMap;
 import java.util.Map;

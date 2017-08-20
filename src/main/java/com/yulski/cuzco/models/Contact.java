@@ -11,6 +11,13 @@ public class Contact extends Model {
     private String phoneNumber;
     private User user;
 
+    public boolean isValid() {
+        return name != null &&
+                name.length() > 0 &&
+                user != null &&
+                user.isValid();
+    }
+
     public static class Contract {
         public static final String TABLE_NAME = "contacts";
         public static final String ID_COLUMN = "contact_id";

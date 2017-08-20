@@ -1,6 +1,6 @@
 package com.yulski.cuzco.db;
 
-import com.yulski.cuzco.env.Env;
+import com.yulski.cuzco.util.Env;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
