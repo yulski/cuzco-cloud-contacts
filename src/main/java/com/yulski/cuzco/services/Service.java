@@ -1,10 +1,11 @@
 package com.yulski.cuzco.services;
 
 import com.yulski.cuzco.db.Db;
+import com.yulski.cuzco.models.Model;
 
 import java.util.List;
 
-public interface Service<T> {
+public interface Service<T extends Model> {
 
    Db db = new Db();
 
@@ -16,6 +17,6 @@ public interface Service<T> {
 
     boolean update(T t);
 
-    boolean delete(T t);
+    boolean delete(int id);
 
 }

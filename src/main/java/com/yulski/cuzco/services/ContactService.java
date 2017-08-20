@@ -99,12 +99,12 @@ public class ContactService implements Service<Contact> {
     }
 
     @Override
-    public boolean delete(Contact contact) {
+    public boolean delete(int id) {
         Connection connection = db.getConnection();
         String sql = "DELETE FROM " + Contact.Contract.TABLE_NAME + " WHERE " + Contact.Contract.ID_COLUMN + " = ?";
         try {
             PreparedStatement statement = connection.prepareStatement(sql);
-            statement.setInt(1, contact.getId());
+            statement.setInt(1, id);
             logger.info("ContactService executing query: '" + sql + "'");
             return statement.execute();
         } catch(SQLException e) {

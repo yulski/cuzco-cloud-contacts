@@ -94,12 +94,12 @@ public class UserService implements Service<User> {
     }
 
     @Override
-    public boolean delete(User user) {
+    public boolean delete(int id) {
         Connection connection = db.getConnection();
         String sql = "DELETE FROM " + User.Contract.TABLE_NAME + " WHERE " + User.Contract.ID_COLUMN + " = ?";
         try {
             PreparedStatement statement = connection.prepareStatement(sql);
-            statement.setInt(1, user.getId());
+            statement.setInt(1, id);
             logger.info("UserService executing query: '" + sql + "'");
             return statement.execute();
         } catch(SQLException e) {
