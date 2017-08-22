@@ -75,7 +75,7 @@ public class ContactService implements Service<Contact> {
             statement.setString(2, contact.getPhoneNumber());
             statement.setInt(3, contact.getUser().getId());
             logger.info("ContactService executing query: '" + sql + "'");
-            return statement.execute();
+            return statement.executeUpdate() == 1;
         } catch (SQLException e) {
             logger.error(e.getMessage(), e);
         }
@@ -94,7 +94,7 @@ public class ContactService implements Service<Contact> {
             statement.setString(2, contact.getPhoneNumber());
             statement.setInt(3, contact.getId());
             logger.info("ContactService executing query: '" + sql + "'");
-            return statement.execute();
+            return statement.executeUpdate() == 1;
         } catch(SQLException e) {
             logger.error(e.getMessage(), e);
         }
@@ -110,7 +110,7 @@ public class ContactService implements Service<Contact> {
             PreparedStatement statement = connection.prepareStatement(sql);
             statement.setInt(1, id);
             logger.info("ContactService executing query: '" + sql + "'");
-            return statement.execute();
+            return statement.executeUpdate() == 1;
         } catch(SQLException e) {
             logger.error(e.getMessage(), e);
         }

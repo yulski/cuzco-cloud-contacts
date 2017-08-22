@@ -91,7 +91,7 @@ public class UserService implements Service<User> {
             statement.setString(1, user.getEmail());
             statement.setString(2, user.getPassword());
             logger.info("Executing query: '" + sql + "'");
-            return statement.execute();
+            return statement.executeUpdate() == 1;
         } catch (SQLException e) {
             logger.error(e.getMessage(), e);
         }
@@ -110,7 +110,7 @@ public class UserService implements Service<User> {
             statement.setString(2, user.getPassword());
             statement.setInt(3, user.getId());
             logger.info("Executing query: '" + sql + "'");
-            return statement.execute();
+            return statement.executeUpdate() == 1;
         } catch (SQLException e) {
             logger.error(e.getMessage(), e);
         }
@@ -126,7 +126,7 @@ public class UserService implements Service<User> {
             PreparedStatement statement = connection.prepareStatement(sql);
             statement.setInt(1, id);
             logger.info("Executing query: '" + sql + "'");
-            return statement.execute();
+            return statement.executeUpdate() == 1;
         } catch(SQLException e) {
             logger.error(e.getMessage(), e);
         }
