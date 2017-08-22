@@ -18,13 +18,14 @@ public class UserService implements Service<User> {
     @Override
     public User getOne(int id) {
         Connection connection = db.getConnection();
-        String sql = "SELECT * FROM " + User.Contract.TABLE_NAME +
-                " WHERE " + User.Contract.ID_COLUMN + " = ? LIMIT 1";
+        String sql = String.format("SELECT * FROM \"%s\".%s WHERE %s = ? LIMIT 1",
+                SCHEMA, User.Contract.TABLE_NAME, User.Contract.ID_COLUMN);
         try {
             PreparedStatement statement = connection.prepareStatement(sql);
             statement.setInt(1, id);
-            logger.info("UserService executing query: '" + sql + "'");
+            logger.info("Executing query: '" + sql + "'");
             ResultSet resultSet = statement.executeQuery();
+            resultSet.next();
             return User.builder()
                     .id(id)
                     .email(resultSet.getString(User.Contract.EMAIL_COLUMN))
@@ -38,13 +39,14 @@ public class UserService implements Service<User> {
 
     public User getOneByEmail(String email) {
         Connection connection = db.getConnection();
-        String sql = "SELECT * FROM " + User.Contract.TABLE_NAME +
-                " WHERE " + User.Contract.EMAIL_COLUMN + " = ? LIMIT 1";
+        String sql = String.format("SELECT * FROM \"%s\".%s WHERE %s = ? LIMIT 1",
+                SCHEMA, User.Contract.TABLE_NAME, User.Contract.EMAIL_COLUMN);
         try {
             PreparedStatement statement = connection.prepareStatement(sql);
             statement.setString(1, email);
-            logger.info("UserService executing query: '" + sql + "'");
+            logger.info("Executing query: '" + sql + "'");
             ResultSet resultSet = statement.executeQuery();
+            resultSet.next();
             return User.builder()
                     .id(resultSet.getInt(User.Contract.ID_COLUMN))
                     .email(resultSet.getString(User.Contract.EMAIL_COLUMN))
@@ -59,11 +61,12 @@ public class UserService implements Service<User> {
     @Override
     public List<User> getAll() {
         Connection connection = db.getConnection();
-        String sql = "SELECT * FROM " + User.Contract.TABLE_NAME;
+        String sql = String.format("SELECT * FROM \"%s\".%s",
+            SCHEMA, User.Contract.TABLE_NAME);
         List<User> allUsers = new ArrayList<>();
         try {
             PreparedStatement statement = connection.prepareStatement(sql);
-            logger.info("UserService executing query: '" + sql + "'");
+            logger.info("Executing query: '" + sql + "'");
             ResultSet resultSet = statement.executeQuery();
             while(resultSet.next()) {
                 allUsers.add(User.builder()
@@ -81,13 +84,13 @@ public class UserService implements Service<User> {
     @Override
     public boolean create(User user) {
         Connection connection = db.getConnection();
-        String sql = "INSERT INTO " + User.Contract.TABLE_NAME + "(" + User.Contract.EMAIL_COLUMN + ", " +
-                User.Contract.PASSWORD_COLUMN + ") VALUES (?,?)";
+        String sql = String.format("INSERT INTO \"%s\".%s (%s, %s) VALUES (?, ?)",
+                SCHEMA, User.Contract.TABLE_NAME, User.Contract.EMAIL_COLUMN, User.Contract.PASSWORD_COLUMN);
         try {
             PreparedStatement statement = connection.prepareStatement(sql);
             statement.setString(1, user.getEmail());
             statement.setString(2, user.getPassword());
-            logger.info("UserService executing query: '" + sql + "'");
+            logger.info("Executing query: '" + sql + "'");
             return statement.execute();
         } catch (SQLException e) {
             logger.error(e.getMessage(), e);
@@ -98,14 +101,15 @@ public class UserService implements Service<User> {
     @Override
     public boolean update(User user) {
         Connection connection = db.getConnection();
-        String sql = "UPDATE " + User.Contract.TABLE_NAME + " SET " + User.Contract.EMAIL_COLUMN + " = ?, " +
-                User.Contract.PASSWORD_COLUMN + " = ? WHERE " + User.Contract.ID_COLUMN + " = ?";
+        String sql = String.format("UPDATE \"%s\".%s SET %s = ?, %s = ? WHERE %s = ?",
+                SCHEMA, User.Contract.TABLE_NAME, User.Contract.EMAIL_COLUMN, User.Contract.PASSWORD_COLUMN,
+                User.Contract.ID_COLUMN);
         try {
             PreparedStatement statement = connection.prepareStatement(sql);
             statement.setString(1, user.getEmail());
             statement.setString(2, user.getPassword());
             statement.setInt(3, user.getId());
-            logger.info("UserService executing query: '" + sql + "'");
+            logger.info("Executing query: '" + sql + "'");
             return statement.execute();
         } catch (SQLException e) {
             logger.error(e.getMessage(), e);
@@ -116,11 +120,12 @@ public class UserService implements Service<User> {
     @Override
     public boolean delete(int id) {
         Connection connection = db.getConnection();
-        String sql = "DELETE FROM " + User.Contract.TABLE_NAME + " WHERE " + User.Contract.ID_COLUMN + " = ?";
+        String sql = String.format("DELETE FROM \"%s\".%s WHERE %s = ?",
+                SCHEMA, User.Contract.TABLE_NAME, User.Contract.ID_COLUMN);
         try {
             PreparedStatement statement = connection.prepareStatement(sql);
             statement.setInt(1, id);
-            logger.info("UserService executing query: '" + sql + "'");
+            logger.info("Executing query: '" + sql + "'");
             return statement.execute();
         } catch(SQLException e) {
             logger.error(e.getMessage(), e);

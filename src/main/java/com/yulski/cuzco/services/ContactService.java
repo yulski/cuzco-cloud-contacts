@@ -19,13 +19,14 @@ public class ContactService implements Service<Contact> {
     @Override
     public Contact getOne(int id) {
         Connection connection = db.getConnection();
-        String sql = "SELECT * FROM " + Contact.Contract.TABLE_NAME +
-                " WHERE " + Contact.Contract.ID_COLUMN + " = ? LIMIT 1";
+        String sql = String.format("SELECT * FROM \"%s\".%s WHERE %s = ? LIMIT 1",
+                SCHEMA, Contact.Contract.TABLE_NAME, Contact.Contract.ID_COLUMN);
         try {
             PreparedStatement statement = connection.prepareStatement(sql);
             statement.setInt(1, id);
             logger.info("ContactService executing query: '" + sql + "'");
             ResultSet resultSet = statement.executeQuery();
+            resultSet.next();
             return Contact.builder()
                     .id(id)
                     .name(resultSet.getString(Contact.Contract.NAME_COLUMN))
@@ -41,7 +42,7 @@ public class ContactService implements Service<Contact> {
     @Override
     public List<Contact> getAll() {
         Connection connection = db.getConnection();
-        String sql = "SELECT * FROM " + User.Contract.TABLE_NAME;
+        String sql = String.format("SELECT * FROM \"%s\".%s", SCHEMA, Contact.Contract.TABLE_NAME);
         List<Contact> allContacts = new ArrayList<>();
         try {
             PreparedStatement statement = connection.prepareStatement(sql);
@@ -65,8 +66,9 @@ public class ContactService implements Service<Contact> {
     @Override
     public boolean create(Contact contact) {
         Connection connection = db.getConnection();
-        String sql = "INSERT INTO " + Contact.Contract.TABLE_NAME + "(" + Contact.Contract.NAME_COLUMN + ", " +
-                Contact.Contract.PHONE_NUMBER_COLUMN + ", " + Contact.Contract.USER_ID_COLUMN + ") VALUES(?,?,?)";
+        String sql = String.format("INSERT INTO \"%s\".%s (%s, %s, %s) VALUES(?,?,?)",
+                SCHEMA, Contact.Contract.TABLE_NAME, Contact.Contract.NAME_COLUMN, Contact.Contract.PHONE_NUMBER_COLUMN,
+                Contact.Contract.USER_ID_COLUMN);
         try {
             PreparedStatement statement = connection.prepareStatement(sql);
             statement.setString(1, contact.getName());
@@ -83,8 +85,9 @@ public class ContactService implements Service<Contact> {
     @Override
     public boolean update(Contact contact) {
         Connection connection = db.getConnection();
-        String sql = "UPDATE " + Contact.Contract.TABLE_NAME + " SET " + Contact.Contract.NAME_COLUMN + " = ?, " +
-                Contact.Contract.PHONE_NUMBER_COLUMN + " = ? WHERE " + Contact.Contract.ID_COLUMN + " = ?";
+        String sql = String.format("UPDATE \"%s\".%s SET %s = ?, %s = ? WHERE %s = ?",
+                SCHEMA, Contact.Contract.TABLE_NAME, Contact.Contract.NAME_COLUMN, Contact.Contract.PHONE_NUMBER_COLUMN,
+                Contact.Contract.ID_COLUMN);
         try {
             PreparedStatement statement = connection.prepareStatement(sql);
             statement.setString(1, contact.getName());
@@ -101,7 +104,8 @@ public class ContactService implements Service<Contact> {
     @Override
     public boolean delete(int id) {
         Connection connection = db.getConnection();
-        String sql = "DELETE FROM " + Contact.Contract.TABLE_NAME + " WHERE " + Contact.Contract.ID_COLUMN + " = ?";
+        String sql = String.format("DELETE FROM \"%s\".%s WHERE %s = ?", SCHEMA, Contact.Contract.TABLE_NAME,
+                Contact.Contract.ID_COLUMN);
         try {
             PreparedStatement statement = connection.prepareStatement(sql);
             statement.setInt(1, id);
@@ -115,8 +119,8 @@ public class ContactService implements Service<Contact> {
 
     public List<Contact> getContactsForUser(User user) {
         Connection connection = db.getConnection();
-        String sql = "SELECT * FROM  " + Contact.Contract.TABLE_NAME +
-                " WHERE " + Contact.Contract.USER_ID_COLUMN + " = ?";
+        String sql = String.format("SELECT * FROM \"%s\".%s WHERE %s = ?", SCHEMA, Contact.Contract.TABLE_NAME,
+                Contact.Contract.ID_COLUMN);
         List<Contact> userContacts = new ArrayList<>();
         try {
             PreparedStatement statement = connection.prepareStatement(sql);
