@@ -52,7 +52,7 @@ public class ContactController extends ModelController<Contact, ContactService> 
 
     public String getAllForUser(Request request, Response response) {
         logger.info("Get all user contacts");
-        User user = new UserService().getOne(1); // TODO remove
+        User user = request.session().attribute("user");
         List<Contact> contacts = service.getContactsForUser(user);
         if(acceptsJson(request)) {
             logger.info("Returning list of user contacts as JSON");
@@ -139,16 +139,13 @@ public class ContactController extends ModelController<Contact, ContactService> 
         Contact contact;
         if(isJson(request)) {
             logger.info("Processing JSON request to create contact");
-            String body = request.body();
-            logger.info("Here comes that body");
-            logger.info(body);
-            contact = gson.fromJson(body, Contact.class);
+            contact = gson.fromJson(request.body(), Contact.class);
         } else {
             logger.info("Processing submitted form to create contact");
             contact = Contact.builder()
                     .name(request.queryParams("name"))
                     .phoneNumber(request.queryParams("phone-number"))
-                    .user(new UserService().getOne(1)) // TODO replace
+                    .user(request.session().attribute("user"))
                     .build();
         }
         boolean success = service.create(contact);
