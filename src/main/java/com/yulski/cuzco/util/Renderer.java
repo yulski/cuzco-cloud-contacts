@@ -7,7 +7,6 @@ import org.jtwig.environment.EnvironmentConfiguration;
 import org.jtwig.environment.EnvironmentConfigurationBuilder;
 import org.jtwig.environment.EnvironmentFactory;
 import org.jtwig.resource.reference.ResourceReference;
-import spark.template.jtwig.JtwigTemplateEngine;
 
 import java.io.File;
 import java.util.HashMap;
@@ -15,13 +14,11 @@ import java.util.Map;
 
 public class Renderer {
 
-    private JtwigTemplateEngine engine;
     private Environment env;
     private String templatesDir;
     private Map<String, Object> baseModel;
 
-    public Renderer(JtwigTemplateEngine engine, String templatesDir) {
-        this.engine = engine;
+    public Renderer(String templatesDir) {
         this.templatesDir = templatesDir;
         init();
     }
@@ -29,6 +26,9 @@ public class Renderer {
     private void init() {
         EnvironmentConfiguration envConfig = EnvironmentConfigurationBuilder
                 .configuration()
+                    .functions()
+                        .add(JTwigFunctions.path)
+                    .and()
                 .build();
         EnvironmentFactory envFactory = new EnvironmentFactory();
         env = envFactory.create(envConfig);

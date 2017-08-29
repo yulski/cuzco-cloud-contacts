@@ -12,10 +12,8 @@ import static spark.Spark.*;
 
 public class Cuzco {
 
-    private static final JtwigTemplateEngine jtwigEngine = new JtwigTemplateEngine("/templates");
-
     public static void main(String[] args) {
-        Renderer renderer = new Renderer(jtwigEngine, Env.getTemplatesDir());
+        Renderer renderer = new Renderer(Env.getTemplatesDir());
 
         DefaultController defaultController = new DefaultController(renderer);
         UserController userController = new UserController(renderer);
