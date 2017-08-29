@@ -2,14 +2,14 @@ package com.yulski.cuzco.controllers;
 
 import com.yulski.cuzco.models.Model;
 import com.yulski.cuzco.services.Service;
+import com.yulski.cuzco.util.Renderer;
 import spark.Request;
 import spark.Response;
-import spark.template.jtwig.JtwigTemplateEngine;
 
 public abstract class ModelController<T extends Model, V extends Service<T>> extends Controller {
 
-    public ModelController(JtwigTemplateEngine jtwigEngine) {
-        super(jtwigEngine);
+    public ModelController(Renderer renderer) {
+        super(renderer);
     }
 
     protected V service = getService();

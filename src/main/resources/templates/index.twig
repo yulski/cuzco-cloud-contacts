@@ -1,11 +1,23 @@
-<!doctype html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>index.twig</title>
-</head>
-<body>
-    <h1>Welcome to {{ projectName }}</h1>
-</body>
-</html>
+{% extends 'layout.twig' %}
+
+{% block title %}
+    Welcome to Cuzco
+{% endblock %}
+
+{% block pageHeading %}
+    Cuzco - Your contact book in the cloud
+{% endblock %}
+
+{% block main %}
+    <p>
+        This is the landing page. There is going to be some image or something here.
+        Logged in users shouldn't see this.
+    </p>
+    <p>
+        Links to registration and login below.
+    </p>
+    <div>
+        <a href="{{ PATH_REGISTRATION }}">Register</a><br>
+        <a href="{{ PATH_LOGIN }}">Log in</a>
+    </div>
+{% endblock %}

@@ -5,6 +5,7 @@ import com.yulski.cuzco.controllers.DefaultController;
 import com.yulski.cuzco.controllers.UserController;
 import com.yulski.cuzco.util.Env;
 import com.yulski.cuzco.util.Paths;
+import com.yulski.cuzco.util.Renderer;
 import spark.template.jtwig.JtwigTemplateEngine;
 
 import static spark.Spark.*;
@@ -14,9 +15,11 @@ public class Cuzco {
     private static final JtwigTemplateEngine jtwigEngine = new JtwigTemplateEngine("/templates");
 
     public static void main(String[] args) {
-        DefaultController defaultController = new DefaultController(jtwigEngine);
-        UserController userController = new UserController(jtwigEngine);
-        ContactController contactController = new ContactController(jtwigEngine);
+        Renderer renderer = new Renderer(jtwigEngine, Env.getTemplatesDir());
+
+        DefaultController defaultController = new DefaultController(renderer);
+        UserController userController = new UserController(renderer);
+        ContactController contactController = new ContactController(renderer);
 
         port(Env.getPort());
 

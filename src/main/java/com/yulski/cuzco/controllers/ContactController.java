@@ -4,7 +4,7 @@ import com.google.gson.JsonObject;
 import com.yulski.cuzco.models.Contact;
 import com.yulski.cuzco.models.User;
 import com.yulski.cuzco.services.ContactService;
-import com.yulski.cuzco.services.UserService;
+import com.yulski.cuzco.util.Renderer;
 import com.yulski.cuzco.util.Templates;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -20,8 +20,8 @@ public class ContactController extends ModelController<Contact, ContactService> 
 
     private static final Logger logger = LoggerFactory.getLogger(ContactController.class.getCanonicalName());
 
-    public ContactController(JtwigTemplateEngine jtwigEngine) {
-        super(jtwigEngine);
+    public ContactController(Renderer renderer) {
+        super(renderer);
     }
 
     @Override
@@ -36,7 +36,7 @@ public class ContactController extends ModelController<Contact, ContactService> 
                 return gson.toJson(new JsonObject());
             } else {
                 logger.info("Rendering dashboard");
-                return render(null, Templates.DASHBOARD);
+                return render(Templates.DASHBOARD, null);
             }
         }
         if(acceptsJson(request)) {
@@ -46,7 +46,7 @@ public class ContactController extends ModelController<Contact, ContactService> 
             logger.info("Rendering contact page");
             Map<String, Object> model = new HashMap<>();
             model.put("contact", contact);
-            return render(model, Templates.CONTACT);
+            return render(Templates.CONTACT, model);
         }
     }
 
@@ -61,7 +61,7 @@ public class ContactController extends ModelController<Contact, ContactService> 
             logger.info("Rendering user's contact list");
             Map<String, Object> model = new HashMap<>();
             model.put("contacts", contacts);
-            return render(model, Templates.DASHBOARD);
+            return render(Templates.DASHBOARD, model);
         }
     }
 
@@ -77,13 +77,13 @@ public class ContactController extends ModelController<Contact, ContactService> 
                 return gson.toJson(new JsonObject());
             } else {
                 logger.info("Rendering dashboard");
-                return render(null, Templates.DASHBOARD);
+                return render(Templates.DASHBOARD, null);
             }
         }
         logger.info("Rendering contact edit page");
         Map<String, Object> model = new HashMap<>();
         model.put("contact", contact);
-        return render(model, Templates.EDIT_CONTACT);
+        return render(Templates.EDIT_CONTACT, model);
     }
 
     @Override
@@ -98,7 +98,7 @@ public class ContactController extends ModelController<Contact, ContactService> 
                 return gson.toJson(new JsonObject());
             } else {
                 logger.info("Rendering dashboard");
-                return render(null, Templates.DASHBOARD);
+                return render(Templates.DASHBOARD, null);
             }
         }
         Contact contact;
@@ -121,7 +121,7 @@ public class ContactController extends ModelController<Contact, ContactService> 
             return getOutcomeJson(success);
         } else {
             logger.info("Rendering edited contact page");
-            return render(getOutcomeMap(success), Templates.CONTACT);
+            return render(Templates.CONTACT, getOutcomeMap(success));
         }
     }
 
@@ -130,7 +130,7 @@ public class ContactController extends ModelController<Contact, ContactService> 
         logger.info("Get create contact form");
         User user = request.session().attribute("user");
         logger.info("Rendering create contact page");
-        return render(null, Templates.CREATE_CONTACT);
+        return render(Templates.CREATE_CONTACT, null);
     }
 
     @Override
@@ -154,7 +154,7 @@ public class ContactController extends ModelController<Contact, ContactService> 
             return getOutcomeJson(success);
         } else {
             logger.info("Rendering the newly created contact template");
-            return render(getOutcomeMap(success), Templates.CONTACT);
+            return render(Templates.CONTACT, getOutcomeMap(success));
         }
     }
 
@@ -168,7 +168,7 @@ public class ContactController extends ModelController<Contact, ContactService> 
             return getOutcomeJson(success);
         } else {
             logger.info("Rendering user's dashboard");
-            return render(getOutcomeMap(success), Templates.DASHBOARD);
+            return render(Templates.DASHBOARD, getOutcomeMap(success));
         }
     }
 

@@ -6,6 +6,7 @@ import com.yulski.cuzco.models.Contact;
 import com.yulski.cuzco.models.User;
 import com.yulski.cuzco.services.ContactService;
 import com.yulski.cuzco.services.UserService;
+import com.yulski.cuzco.util.Renderer;
 import com.yulski.cuzco.util.Templates;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -21,8 +22,8 @@ public class UserController extends ModelController<User, UserService> {
 
     private static final Logger logger = LoggerFactory.getLogger(UserController.class.getCanonicalName());
 
-    public UserController(JtwigTemplateEngine jtwigEngine) {
-        super(jtwigEngine);
+    public UserController(Renderer renderer) {
+        super(renderer);
     }
 
     public String getDashboard(Request request, Response response) {
@@ -32,14 +33,14 @@ public class UserController extends ModelController<User, UserService> {
             logger.error("Attempting to view dashboard when no user logged in");
             response.status(400);
             logger.info("Rendering landing page");
-            return render(null, Templates.LANDING_PAGE);
+            return render(Templates.LANDING_PAGE, null);
         }
         logger.info("Getting user contacts");
         List<Contact> contacts = new ContactService().getContactsForUser(user); // TODO fix this - this shouldn't be directly instantiating a ContactService
         Map<String, Object> model = new HashMap<>();
         model.put("user", user);
         model.put("contacts", contacts);
-        return render(model, Templates.DASHBOARD);
+        return render(Templates.DASHBOARD, model);
     }
 
     @Override
@@ -56,7 +57,7 @@ public class UserController extends ModelController<User, UserService> {
                 final String template = request.session().attribute("user") == null ?
                         Templates.LANDING_PAGE : Templates.DASHBOARD;
                 logger.info("rendering " + template);
-                return render(null, template);
+                return render(template, null);
             }
         }
         if (acceptsJson(request)) {
@@ -66,7 +67,7 @@ public class UserController extends ModelController<User, UserService> {
             logger.info("rendering user profile");
             Map<String, Object> model = new HashMap<>();
             model.put("user", user);
-            return render(model, Templates.USER_PROFILE);
+            return render(Templates.USER_PROFILE, model);
         }
     }
 
@@ -76,10 +77,10 @@ public class UserController extends ModelController<User, UserService> {
             logger.error("User is already logged in.");
             response.status(400);
             logger.info("Rendering dashboard.");
-            return render(null, Templates.DASHBOARD);
+            return render(Templates.DASHBOARD, null);
         }
         logger.info("Rendering login form");
-        return render(null, Templates.LOGIN);
+        return render(Templates.LOGIN, null);
     }
 
     public String login(Request request, Response response) {
@@ -92,7 +93,7 @@ public class UserController extends ModelController<User, UserService> {
                 return gson.toJson(new JsonObject());
             } else {
                 logger.info("Rendering dashboard");
-                return render(null, Templates.DASHBOARD);
+                return render(Templates.DASHBOARD, null);
             }
         }
         String email = request.queryParams("email");
@@ -106,7 +107,7 @@ public class UserController extends ModelController<User, UserService> {
                 return gson.toJson(new JsonObject());
             } else {
                 logger.info("Rendering landing page");
-                return render(null, Templates.LANDING_PAGE);
+                return render(Templates.LANDING_PAGE, null);
             }
         }
         logger.info("Attempting to authenticate user");
@@ -125,7 +126,7 @@ public class UserController extends ModelController<User, UserService> {
             return getOutcomeJson(success);
         } else {
             logger.info("Rendering template " + template);
-            return render(getOutcomeMap(success), template);
+            return render(template, getOutcomeMap(success));
         }
     }
 
@@ -139,7 +140,7 @@ public class UserController extends ModelController<User, UserService> {
                 return gson.toJson(new JsonObject());
             } else {
                 logger.info("Rendering landing page");
-                return render(null, Templates.LANDING_PAGE);
+                return render(Templates.LANDING_PAGE, null);
             }
         }
         logger.info("Removing user from session");
@@ -149,7 +150,7 @@ public class UserController extends ModelController<User, UserService> {
             return getOutcomeJson(true);
         } else {
             logger.info("Rendering landing page");
-            return render(getOutcomeMap(true), Templates.LANDING_PAGE);
+            return render(Templates.LANDING_PAGE, getOutcomeMap(true));
         }
     }
 
@@ -160,13 +161,13 @@ public class UserController extends ModelController<User, UserService> {
             logger.error("Request for edit profile form when no user logged in");
             response.status(400);
             logger.info("Rendering landing page");
-            return render(null, Templates.LANDING_PAGE);
+            return render(Templates.LANDING_PAGE, null);
         }
         User user = request.session().attribute("user");
         Map<String, Object> model = new HashMap<>();
         model.put("user", user);
         logger.info("Rendering form for editing user with id " + user.getId());
-        return render(model, Templates.EDIT_USER);
+        return render(Templates.EDIT_USER, model);
     }
 
     @Override
@@ -181,7 +182,7 @@ public class UserController extends ModelController<User, UserService> {
                 return gson.toJson(new JsonObject());
             } else {
                 logger.info("Rendering landing page template");
-                return render(null, Templates.LANDING_PAGE);
+                return render(Templates.LANDING_PAGE, null);
             }
         }
         User user = loggedInUser;
@@ -205,7 +206,7 @@ public class UserController extends ModelController<User, UserService> {
                 return gson.toJson(new JsonObject());
             } else {
                 logger.info("Rendering dashboard");
-                return render(null, Templates.DASHBOARD);
+                return render(Templates.DASHBOARD, null);
             }
         }
         if(!email.equals(loggedInUser.getEmail())) {
@@ -224,7 +225,7 @@ public class UserController extends ModelController<User, UserService> {
                 return gson.toJson(new JsonObject());
             } else {
                 logger.info("Rendering dashboard");
-                return render(null, Templates.DASHBOARD);
+                return render(Templates.DASHBOARD, null);
             }
         }
         logger.info("Editing user's profile");
@@ -234,7 +235,7 @@ public class UserController extends ModelController<User, UserService> {
             return getOutcomeJson(success);
         } else {
             logger.info("Rendering user profile page");
-            return render(getOutcomeMap(success), Templates.USER_PROFILE);
+            return render(Templates.USER_PROFILE, getOutcomeMap(success));
         }
     }
 
@@ -245,10 +246,10 @@ public class UserController extends ModelController<User, UserService> {
             logger.error("Logged in user attempting to go to registration page");
             response.status(400);
             logger.info("Rendering dashboard");
-            return render(null, Templates.DASHBOARD);
+            return render(Templates.DASHBOARD, null);
         }
         logger.info("Rendering registration page");
-        return render(null, Templates.REGISTRATION);
+        return render(Templates.REGISTRATION, null);
     }
 
     @Override
@@ -262,7 +263,7 @@ public class UserController extends ModelController<User, UserService> {
                 return gson.toJson(new JsonObject());
             } else {
                 logger.info("Rendering dashboard");
-                return render(null, Templates.DASHBOARD);
+                return render(Templates.DASHBOARD, null);
             }
         }
         User user;
@@ -284,7 +285,7 @@ public class UserController extends ModelController<User, UserService> {
                 return gson.toJson(new JsonObject());
             } else {
                 logger.info("Rendering landing page");
-                return render(null, Templates.LANDING_PAGE);
+                return render(Templates.LANDING_PAGE, null);
             }
         }
         if(service.getOneByEmail(user.getEmail()) != null) {
@@ -295,7 +296,7 @@ public class UserController extends ModelController<User, UserService> {
                 return gson.toJson(new JsonObject());
             } else {
                 logger.info("Rendering landing page");
-                return render(null, Templates.LANDING_PAGE);
+                return render(Templates.LANDING_PAGE, null);
             }
         }
         logger.info("Creating new user");
@@ -310,7 +311,7 @@ public class UserController extends ModelController<User, UserService> {
         } else {
             final String template = success ? Templates.DASHBOARD : Templates.LANDING_PAGE;
             logger.info("Rendering template " + template);
-            return render(getOutcomeMap(success), template);
+            return render(template, getOutcomeMap(success));
         }
     }
 
@@ -326,7 +327,7 @@ public class UserController extends ModelController<User, UserService> {
                 return gson.toJson(new JsonObject());
             } else {
                 logger.info("Rendering landing page");
-                return render(null, Templates.LANDING_PAGE);
+                return render(Templates.LANDING_PAGE, null);
             }
         }
         logger.info("Deleting user account");
@@ -338,7 +339,7 @@ public class UserController extends ModelController<User, UserService> {
             return getOutcomeJson(success);
         } else {
             logger.info("Rendering landing page");
-            return render(getOutcomeMap(success), Templates.LANDING_PAGE);
+            return render(Templates.LANDING_PAGE, getOutcomeMap(success));
         }
     }
 

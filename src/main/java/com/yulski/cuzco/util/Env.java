@@ -15,6 +15,7 @@ public class Env {
     private static final String DB_SCHEMA = "DB_SCHEMA";
     private static final String DB_USER = "DB_USER";
     private static final String DB_PASS = "DB_PASS";
+    private static final String TEMPLATES_DIR = "TEMPLATES_DIR";
 
     private static final Map<String, String> CONFIG_VARS = new HashMap<>();
 
@@ -32,6 +33,9 @@ public class Env {
         CONFIG_VARS.put(DB_SCHEMA, environment.get(DB_SCHEMA));
         CONFIG_VARS.put(DB_USER, environment.get(DB_USER));
         CONFIG_VARS.put(DB_PASS, environment.get(DB_PASS));
+
+        // templates
+        CONFIG_VARS.put(TEMPLATES_DIR, environment.get(TEMPLATES_DIR));
     }
 
     public static int getPort() {
@@ -60,6 +64,10 @@ public class Env {
 
     public static String getDbPass() {
         return CONFIG_VARS.get(DB_PASS);
+    }
+
+    public static String getTemplatesDir() {
+        return CONFIG_VARS.get(TEMPLATES_DIR);
     }
 
 }
