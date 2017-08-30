@@ -28,6 +28,7 @@ public class Renderer {
                 .configuration()
                     .functions()
                         .add(JTwigFunctions.path)
+                        .add(JTwigFunctions.toString)
                     .and()
                 .build();
         EnvironmentFactory envFactory = new EnvironmentFactory();

@@ -32,4 +32,24 @@ public class JTwigFunctions {
         }
     };
 
+    public static JtwigFunction toString = new JtwigFunction() {
+        @Override
+        public String name() {
+            return "toString";
+        }
+
+        @Override
+        public Collection<String> aliases() {
+            Collection<String> aliases = new ArrayList<>();
+            aliases.add("toString");
+            return aliases;
+        }
+
+        @Override
+        public Object execute(FunctionRequest request) {
+            Object obj = request.getArguments().get(0);
+            return obj.toString();
+        }
+    };
+
 }

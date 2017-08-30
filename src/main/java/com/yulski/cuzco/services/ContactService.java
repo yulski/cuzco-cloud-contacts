@@ -117,7 +117,7 @@ public class ContactService extends Service<Contact> {
     public List<Contact> getContactsForUser(User user) {
         Connection connection = db.getConnection();
         String sql = String.format("SELECT * FROM \"%s\".%s WHERE %s = ?", SCHEMA, Contact.Contract.TABLE_NAME,
-                Contact.Contract.ID_COLUMN);
+                User.Contract.ID_COLUMN);
         List<Contact> userContacts = new ArrayList<>();
         try {
             PreparedStatement statement = connection.prepareStatement(sql);

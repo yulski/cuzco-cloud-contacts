@@ -13,7 +13,7 @@
         <ul>
             {% for contact in contacts %}
                 <li>
-                    <a href="{{ path(PATH_CONTACT, {'id': contact.getId()}) }}">
+                    <a href="{{ path(PATH_CONTACT, {'id': toString(contact.getId())}) }}">
                         {{ contact.getName() }}
                     </a>
                 </li>

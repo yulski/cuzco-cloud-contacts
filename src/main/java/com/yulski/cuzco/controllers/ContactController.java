@@ -149,7 +149,7 @@ public class ContactController extends ModelController<Contact, ContactService> 
             logger.info("Processing submitted form to create contact");
             contact = Contact.builder()
                     .name(request.queryParams("name"))
-                    .phoneNumber(request.queryParams("phone-number"))
+                    .phoneNumber(request.queryParams("phoneNumber"))
                     .user(request.session().attribute("user"))
                     .build();
         }
