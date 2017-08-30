@@ -27,21 +27,26 @@ public class Cuzco {
         // User routes
         get(Paths.DASHBOARD, userController::getDashboard);
         get(Paths.PROFILE, userController::getOne);
-        delete(Paths.PROFILE, userController::delete);
+        // TODO change to delete
+        // TODO add a password confirmation page before the user is allowed to delete account. this page can be reused for different things, just redirect to different page after
+        post(Paths.PROFILE, userController::delete);
         get(Paths.LOGIN, userController::getLoginForm);
         post(Paths.LOGIN, userController::login);
         post(Paths.LOGOUT, userController::logout);
         get(Paths.EDIT_PROFILE, userController::getEditForm);
-        put(Paths.EDIT_PROFILE, userController::edit);
+        // TODO change to PUT
+        post(Paths.EDIT_PROFILE, userController::edit);
         get(Paths.REGISTRATION, userController::getCreateForm);
         post(Paths.REGISTRATION, userController::create);
 
         // Contact routes
         get(Paths.CONTACT, contactController::getOne);
-        delete(Paths.CONTACT, contactController::delete);
+        // TODO change to delete
+        post(Paths.CONTACT, contactController::delete);
         get(Paths.USER_CONTACTS, contactController::getAllForUser);
         get(Paths.EDIT_CONTACT, contactController::getEditForm);
-        put(Paths.EDIT_CONTACT, contactController::edit);
+        // TODO change to put
+        post(Paths.EDIT_CONTACT, contactController::edit);
         get(Paths.CREATE_CONTACT, contactController::getCreateForm);
         post(Paths.CREATE_CONTACT, contactController::create);
     }
