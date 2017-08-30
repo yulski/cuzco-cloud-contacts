@@ -61,7 +61,7 @@ public class ContactController extends ModelController<Contact, ContactService> 
             logger.info("Rendering user's contact list");
             Map<String, Object> model = new HashMap<>();
             model.put("contacts", contacts);
-            return render(Templates.DASHBOARD, model);
+            return render(Templates.USER_CONTACTS, model);
         }
     }
 
