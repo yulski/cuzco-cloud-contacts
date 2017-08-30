@@ -4,13 +4,13 @@ import com.google.gson.JsonObject;
 import com.yulski.cuzco.models.Contact;
 import com.yulski.cuzco.models.User;
 import com.yulski.cuzco.services.ContactService;
+import com.yulski.cuzco.util.Paths;
 import com.yulski.cuzco.util.Renderer;
 import com.yulski.cuzco.util.Templates;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import spark.Request;
 import spark.Response;
-import spark.template.jtwig.JtwigTemplateEngine;
 
 import java.util.HashMap;
 import java.util.List;
@@ -35,8 +35,9 @@ public class ContactController extends ModelController<Contact, ContactService> 
                 logger.info("Returning empty JSON");
                 return gson.toJson(new JsonObject());
             } else {
-                logger.info("Rendering dashboard");
-                return render(Templates.DASHBOARD, null);
+                logger.info("Redirecting to dashboard");
+                response.redirect(Paths.DASHBOARD);
+                return "";
             }
         }
         if(acceptsJson(request)) {
@@ -76,8 +77,9 @@ public class ContactController extends ModelController<Contact, ContactService> 
                 logger.info("Returning empty JSON");
                 return gson.toJson(new JsonObject());
             } else {
-                logger.info("Rendering dashboard");
-                return render(Templates.DASHBOARD, null);
+                logger.info("Redirecting to dashboard");
+                response.redirect(Paths.DASHBOARD);
+                return "";
             }
         }
         logger.info("Rendering contact edit page");
@@ -97,8 +99,9 @@ public class ContactController extends ModelController<Contact, ContactService> 
                 logger.info("Returning empty JSON");
                 return gson.toJson(new JsonObject());
             } else {
-                logger.info("Rendering dashboard");
-                return render(Templates.DASHBOARD, null);
+                logger.info("Redirecting to dashboard");
+                response.redirect(Paths.DASHBOARD);
+                return "";
             }
         }
         Contact contact;
@@ -120,8 +123,9 @@ public class ContactController extends ModelController<Contact, ContactService> 
             logger.info("Sending JSON response");
             return getOutcomeJson(success);
         } else {
-            logger.info("Rendering edited contact page");
-            return render(Templates.CONTACT, getOutcomeMap(success));
+            logger.info("Redirecting to edited contact page");
+            response.redirect(Paths.generatePath(Paths.CONTACT, Integer.toString(id)));
+            return "";
         }
     }
 
@@ -153,8 +157,10 @@ public class ContactController extends ModelController<Contact, ContactService> 
             logger.info("Sending JSON response");
             return getOutcomeJson(success);
         } else {
-            logger.info("Rendering the newly created contact template");
-            return render(Templates.CONTACT, getOutcomeMap(success));
+            logger.info("Redirecting to the newly created contact page");
+            // TODO get integer from service - will require refactoring services to return id of created entity
+            response.redirect(Paths.generatePath(Paths.CONTACT, Integer.toString(0)));
+            return "";
         }
     }
 
@@ -167,8 +173,9 @@ public class ContactController extends ModelController<Contact, ContactService> 
             logger.info("Sending JSON response");
             return getOutcomeJson(success);
         } else {
-            logger.info("Rendering user's dashboard");
-            return render(Templates.DASHBOARD, getOutcomeMap(success));
+            logger.info("Redirecting to dashboard");
+            response.redirect(Paths.DASHBOARD);
+            return "";
         }
     }
 
