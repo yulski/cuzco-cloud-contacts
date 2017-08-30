@@ -1,0 +1,25 @@
+{% extends 'layout.twig' %}
+
+{% block title %}
+    Cuzco my contacts
+{% endblock %}
+
+{% block pageHeading %}
+    Your contacts
+{% endblock %}
+
+{% block main %}
+    {% if contacts %}
+        <ul>
+            {% for contact in contacts %}
+                <li>
+                    <a href="{{ path(PATH_CONTACT, {'id': contact.getId()}) }}">
+                        {{ contact.getName() }}
+                    </a>
+                </li>
+            {% endfor %}
+        </ul>
+    {% else %}
+        You don't have any contacts yet...
+    {% endif %}
+{% endblock %}

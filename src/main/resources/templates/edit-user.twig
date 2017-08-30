@@ -1,0 +1,31 @@
+{% extends 'layout.twig' %}
+
+{% block title %}
+    Cuzco edit profile
+{% endblock %}
+
+{% block pageHeading %}
+    Edit your profile
+{% endblock %}
+
+{% block main %}
+    <form method="post" action="{{ path(PATH_EDIT_PROFILE) }}">
+        <p>
+            Only the fields you fill will be changed. If you leave email blank and change your password, only the password
+            will be changed. If you input your current email or password, nothing will be changed.
+        </p>
+        <section>
+            <label for="email">Email: </label>
+            <input type="email" id="email" name="email" value="{{ user.getEmail() }}"/>
+        </section>
+        <section>
+            <label for="password1">New password: </label>
+            <input type="password" id="password1" name="password1"/>
+        </section>
+        <section>
+            <label for="password2">Repeat new password: </label>
+            <input type="password" id="password2" name="password2"/>
+        </section>
+        <input type="submit" value="Confirm"/>
+    </form>
+{% endblock %}

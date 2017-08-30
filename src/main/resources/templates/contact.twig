@@ -1,0 +1,14 @@
+{% extends 'layout.twig' %}
+
+{% block title %}
+    Cuzco contact
+{% endblock %}
+
+{% block pageHeading %}
+    {{ contact.getName() }}
+{% endblock %}
+
+{% block main %}
+    Name: {{ contact.getName() }}
+    Phone number: {{ contact.getPhoneNumber() }}
+{% endblock %}

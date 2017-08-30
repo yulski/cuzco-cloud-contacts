@@ -1,0 +1,44 @@
+{% extends 'layout.twig' %}
+
+{% block title %}
+    Cuzco dashboard
+{% endblock %}
+
+{% block pageHeading %}
+    Your dashboard
+{% endblock %}
+
+{% block main %}
+    <div>
+        <ul>
+            <li>
+                <a href="{{ path(PATH_USER_CONTACTS) }}">Contact list</a>
+            </li>
+            <li>
+                <a href="{{ path(PATH_CREATE_CONTACT) }}">Create contact</a>
+            </li>
+            <li>
+                <a href="{{ path(PATH_PROFILE) }}">View your profile</a>
+            </li>
+            <li>
+                <a href="{{ path(PATH_LOGOUT) }}">Log out</a>
+            </li>
+        </ul>
+    </div>
+    <div>
+        {% if contacts %}
+            <ul>
+                {% for contact in contacts %}
+                    <li>
+                        {{ contact.getName() }}
+                    </li>
+                {% endfor %}
+            </ul>
+        {% else %}
+            <p>
+                You don't have any contacts yet...
+            </p>
+        {% endif %}
+    </div>
+{% endblock %}
+

@@ -1,0 +1,14 @@
+{% extends 'layout.twig' %}
+
+{% block title %}
+    Cuzco profile
+{% endblock %}
+
+{% block pageHeading %}
+    Your profile
+{% endblock %}
+
+{% block main %}
+    Email: {{ user.getEmail() }}<br/>
+    Some other info...
+{% endblock %}
