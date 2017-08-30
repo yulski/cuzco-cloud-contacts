@@ -1,6 +1,7 @@
 package com.yulski.cuzco.services;
 
 import com.yulski.cuzco.models.User;
+import org.mindrot.jbcrypt.BCrypt;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -84,9 +85,10 @@ public class UserService extends Service<User> {
         String sql = String.format("INSERT INTO \"%s\".%s (%s, %s) VALUES (?, ?)",
                 SCHEMA, User.Contract.TABLE_NAME, User.Contract.EMAIL_COLUMN, User.Contract.PASSWORD_COLUMN);
         try {
+            String hashedPassword = BCrypt.hashpw(user.getPassword(), BCrypt.gensalt());
             PreparedStatement statement = connection.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
             statement.setString(1, user.getEmail());
-            statement.setString(2, user.getPassword());
+            statement.setString(2, hashedPassword);
             logger.info("Executing query: '" + sql + "'");
             return handleInsert(statement);
         } catch (SQLException e) {
@@ -132,6 +134,6 @@ public class UserService extends Service<User> {
 
     public boolean authenticate(String email, String password) {
         User user = getOneByEmail(email);
-        return user != null && user.getPassword().equals(password);
+        return user != null && BCrypt.checkpw(password, user.getPassword());
     }
 }
