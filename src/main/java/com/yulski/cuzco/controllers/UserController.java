@@ -269,6 +269,17 @@ public class UserController extends ModelController<User, UserService> {
                 return "";
             }
         }
+        if(!request.queryParams("password1").equals(request.queryParams("password2"))) {
+            logger.error("Passwords aren't equal");
+            if(acceptsJson(request)) {
+                logger.info("Returning empty JSON");
+                return gson.toJson(new JsonObject());
+            } else {
+                logger.info("Redirecting to registration page");
+                response.redirect(Paths.REGISTRATION);
+                return "";
+            }
+        }
         User user;
         if(isJson(request)) {
             logger.info("Processing JSON request to create new user");
@@ -277,30 +288,28 @@ public class UserController extends ModelController<User, UserService> {
             logger.info("Processing submitted form to create new user");
             user = User.builder()
                     .email(request.queryParams("email"))
-                    .password(request.queryParams("password"))
+                    .password(request.queryParams("password1"))
                     .build();
         }
         if(!user.isValid()) {
             logger.error("Invalid registration form submitted. User is not valid");
-            response.status(400);
             if(acceptsJson(request)) {
                 logger.info("Returning empty JSON");
                 return gson.toJson(new JsonObject());
             } else {
-                logger.info("Redirecting to landing page");
-                response.redirect(Paths.LANDING_PAGE);
+                logger.info("Redirecting to registration page");
+                response.redirect(Paths.REGISTRATION);
                 return "";
             }
         }
         if(service.getOneByEmail(user.getEmail()) != null) {
             logger.error("Invalid registration form submitted. The email address is already in use");
-            response.status(400);
             if(acceptsJson(request)) {
                 logger.info("Returning empty JSON");
                 return gson.toJson(new JsonObject());
             } else {
-                logger.info("Redirecting to landing page");
-                response.redirect(Paths.LANDING_PAGE);
+                logger.info("Redirecting to registration page");
+                response.redirect(Paths.REGISTRATION);
                 return "";
             }
         }
