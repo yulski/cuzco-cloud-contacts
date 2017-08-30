@@ -1,6 +1,7 @@
 package com.yulski.cuzco.controllers;
 
 import com.yulski.cuzco.models.User;
+import com.yulski.cuzco.util.FlashMessageManager;
 import com.yulski.cuzco.util.Paths;
 import com.yulski.cuzco.util.Renderer;
 import com.yulski.cuzco.util.Templates;
@@ -13,8 +14,8 @@ public class DefaultController extends Controller {
 
     private static final Logger logger = LoggerFactory.getLogger(DefaultController.class.getCanonicalName());
 
-    public DefaultController(Renderer renderer) {
-        super(renderer);
+    public DefaultController(Renderer renderer, FlashMessageManager flash) {
+        super(renderer, flash);
     }
 
     public String getLandingPage(Request request, Response response) {

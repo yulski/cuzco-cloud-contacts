@@ -5,6 +5,7 @@ import com.yulski.cuzco.models.Contact;
 import com.yulski.cuzco.models.User;
 import com.yulski.cuzco.services.ContactService;
 import com.yulski.cuzco.services.Service;
+import com.yulski.cuzco.util.FlashMessageManager;
 import com.yulski.cuzco.util.Paths;
 import com.yulski.cuzco.util.Renderer;
 import com.yulski.cuzco.util.Templates;
@@ -21,8 +22,8 @@ public class ContactController extends ModelController<Contact, ContactService> 
 
     private static final Logger logger = LoggerFactory.getLogger(ContactController.class.getCanonicalName());
 
-    public ContactController(Renderer renderer) {
-        super(renderer);
+    public ContactController(Renderer renderer, FlashMessageManager flash) {
+        super(renderer, flash);
     }
 
     @Override
@@ -32,7 +33,7 @@ public class ContactController extends ModelController<Contact, ContactService> 
         Contact contact = service.getOne(id);
         if(contact == null) {
             logger.error("No contact found for id " + id);
-            setFlashMessage("No contact with id " + id, "error", request.session());
+            flash.setFlashMessage("No contact with id " + id, "error", request.session());
             if(acceptsJson(request)) {
                 logger.info("Returning empty JSON");
                 return gson.toJson(new JsonObject());
@@ -75,7 +76,7 @@ public class ContactController extends ModelController<Contact, ContactService> 
         Contact contact = service.getOne(id);
         if(contact == null) {
             logger.error("No contact found for id " + id);
-            setFlashMessage("No contact with id " + id, "error", request.session());
+            flash.setFlashMessage("No contact with id " + id, "error", request.session());
             if(acceptsJson(request)) {
                 logger.info("Returning empty JSON");
                 return gson.toJson(new JsonObject());
@@ -98,7 +99,7 @@ public class ContactController extends ModelController<Contact, ContactService> 
         Contact oldContact = service.getOne(id);
         if(oldContact == null) {
             logger.error("No contact found for id " + id);
-            setFlashMessage("No contact with id " + id, "error", request.session());
+            flash.setFlashMessage("No contact with id " + id, "error", request.session());
             if(acceptsJson(request)) {
                 logger.info("Returning empty JSON");
                 return gson.toJson(new JsonObject());
@@ -124,9 +125,9 @@ public class ContactController extends ModelController<Contact, ContactService> 
         }
         boolean success = service.update(contact);
         if(success) {
-            setFlashMessage("Contact information updated successfully", "success", request.session());
+            flash.setFlashMessage("Contact information updated successfully", "success", request.session());
         } else {
-            setFlashMessage("Failed to update contact information", "error", request.session());
+            flash.setFlashMessage("Failed to update contact information", "error", request.session());
         }
         if(acceptsJson(request)) {
             logger.info("Sending JSON response");
@@ -164,9 +165,9 @@ public class ContactController extends ModelController<Contact, ContactService> 
         int createdId = service.create(contact);
         boolean success = createdId != Service.UPDATE_FAILURE;
         if(success) {
-            setFlashMessage("Created contact successfully", "success", request.session());
+            flash.setFlashMessage("Created contact successfully", "success", request.session());
         } else {
-            setFlashMessage("Failed to create contact", "error", request.session());
+            flash.setFlashMessage("Failed to create contact", "error", request.session());
         }
         if(acceptsJson(request)) {
             logger.info("Sending JSON response");
@@ -184,9 +185,9 @@ public class ContactController extends ModelController<Contact, ContactService> 
         int id = Integer.parseInt(request.params("id"));
         boolean success = service.delete(id);
         if(success) {
-            setFlashMessage("Contact deleted successfully", "success", request.session());
+            flash.setFlashMessage("Contact deleted successfully", "success", request.session());
         } else {
-            setFlashMessage("Failed to delete contact", "error", request.session());
+            flash.setFlashMessage("Failed to delete contact", "error", request.session());
         }
         if(acceptsJson(request)) {
             logger.info("Sending JSON response");
