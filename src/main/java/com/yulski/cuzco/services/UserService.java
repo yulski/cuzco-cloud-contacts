@@ -4,14 +4,11 @@ import com.yulski.cuzco.models.User;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
+import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 
-public class UserService implements Service<User> {
+public class UserService extends Service<User> {
 
     protected static final Logger logger = LoggerFactory.getLogger(UserService.class.getCanonicalName());
 
@@ -82,20 +79,20 @@ public class UserService implements Service<User> {
     }
 
     @Override
-    public boolean create(User user) {
+    public int create(User user) {
         Connection connection = db.getConnection();
         String sql = String.format("INSERT INTO \"%s\".%s (%s, %s) VALUES (?, ?)",
                 SCHEMA, User.Contract.TABLE_NAME, User.Contract.EMAIL_COLUMN, User.Contract.PASSWORD_COLUMN);
         try {
-            PreparedStatement statement = connection.prepareStatement(sql);
+            PreparedStatement statement = connection.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
             statement.setString(1, user.getEmail());
             statement.setString(2, user.getPassword());
             logger.info("Executing query: '" + sql + "'");
-            return statement.executeUpdate() == 1;
+            return handleInsert(statement);
         } catch (SQLException e) {
             logger.error(e.getMessage(), e);
         }
-        return false;
+        return UPDATE_FAILURE;
     }
 
     @Override

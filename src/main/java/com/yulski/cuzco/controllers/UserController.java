@@ -5,6 +5,7 @@ import com.google.gson.JsonParser;
 import com.yulski.cuzco.models.Contact;
 import com.yulski.cuzco.models.User;
 import com.yulski.cuzco.services.ContactService;
+import com.yulski.cuzco.services.Service;
 import com.yulski.cuzco.services.UserService;
 import com.yulski.cuzco.util.Paths;
 import com.yulski.cuzco.util.Renderer;
@@ -304,7 +305,8 @@ public class UserController extends ModelController<User, UserService> {
             }
         }
         logger.info("Creating new user");
-        boolean success = service.create(user);
+        int createdId = service.create(user);
+        boolean success = createdId != Service.UPDATE_FAILURE;
         if(success) {
             logger.info("User registration successful. Logging user in");
             request.session().attribute("user", user);

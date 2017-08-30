@@ -5,14 +5,11 @@ import com.yulski.cuzco.models.User;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
+import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 
-public class ContactService implements Service<Contact> {
+public class ContactService extends Service<Contact> {
 
     protected static final Logger logger = LoggerFactory.getLogger(ContactService.class.getCanonicalName());
 
@@ -64,22 +61,22 @@ public class ContactService implements Service<Contact> {
     }
 
     @Override
-    public boolean create(Contact contact) {
+    public int create(Contact contact) {
         Connection connection = db.getConnection();
         String sql = String.format("INSERT INTO \"%s\".%s (%s, %s, %s) VALUES(?,?,?)",
                 SCHEMA, Contact.Contract.TABLE_NAME, Contact.Contract.NAME_COLUMN, Contact.Contract.PHONE_NUMBER_COLUMN,
                 Contact.Contract.USER_ID_COLUMN);
         try {
-            PreparedStatement statement = connection.prepareStatement(sql);
+            PreparedStatement statement = connection.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
             statement.setString(1, contact.getName());
             statement.setString(2, contact.getPhoneNumber());
             statement.setInt(3, contact.getUser().getId());
             logger.info("ContactService executing query: '" + sql + "'");
-            return statement.executeUpdate() == 1;
+            return handleInsert(statement);
         } catch (SQLException e) {
             logger.error(e.getMessage(), e);
         }
-        return false;
+        return UPDATE_FAILURE;
     }
 
     @Override

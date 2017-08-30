@@ -4,6 +4,7 @@ import com.google.gson.JsonObject;
 import com.yulski.cuzco.models.Contact;
 import com.yulski.cuzco.models.User;
 import com.yulski.cuzco.services.ContactService;
+import com.yulski.cuzco.services.Service;
 import com.yulski.cuzco.util.Paths;
 import com.yulski.cuzco.util.Renderer;
 import com.yulski.cuzco.util.Templates;
@@ -152,14 +153,14 @@ public class ContactController extends ModelController<Contact, ContactService> 
                     .user(request.session().attribute("user"))
                     .build();
         }
-        boolean success = service.create(contact);
+        int createdId = service.create(contact);
+        boolean success = createdId != Service.UPDATE_FAILURE;
         if(acceptsJson(request)) {
             logger.info("Sending JSON response");
             return getOutcomeJson(success);
         } else {
             logger.info("Redirecting to the newly created contact page");
-            // TODO get integer from service - will require refactoring services to return id of created entity
-            response.redirect(Paths.generatePath(Paths.CONTACT, Integer.toString(0)));
+            response.redirect(Paths.generatePath(Paths.CONTACT, Integer.toString(createdId)));
             return "";
         }
     }

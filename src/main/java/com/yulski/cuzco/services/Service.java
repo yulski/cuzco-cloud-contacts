@@ -4,22 +4,41 @@ import com.yulski.cuzco.db.Db;
 import com.yulski.cuzco.models.Model;
 import com.yulski.cuzco.util.Env;
 
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.List;
 
-public interface Service<T extends Model> {
+public abstract class Service<T extends Model> {
 
-    String SCHEMA = Env.getDbSchema();
+    public static final int UPDATE_FAILURE = -1;
 
-    Db db = new Db();
+    public static final String SCHEMA = Env.getDbSchema();
 
-    T getOne(int id);
+    protected static final Db db = new Db();
 
-    List<T> getAll();
+    public abstract T getOne(int id);
 
-    boolean create(T t);
+    public abstract List<T> getAll();
 
-    boolean update(T t);
+    public abstract int create(T t);
 
-    boolean delete(int id);
+    public abstract boolean update(T t);
+
+    public abstract boolean delete(int id);
+
+    protected final int handleInsert(PreparedStatement statement) {
+        try {
+            if (statement.executeUpdate() == 1) {
+                ResultSet keys = statement.getGeneratedKeys();
+                keys.next();
+                return keys.getInt(1);
+            } else {
+                return UPDATE_FAILURE;
+            }
+        } catch(SQLException e) {
+            return UPDATE_FAILURE;
+        }
+    }
 
 }
