@@ -41,7 +41,7 @@ public class UserController extends ModelController<User, UserService> {
         Map<String, Object> model = new HashMap<>();
         model.put("user", user);
         model.put("contacts", contacts);
-        return render(Templates.DASHBOARD, model);
+        return render(request, Templates.DASHBOARD, model);
     }
 
     @Override
@@ -66,7 +66,7 @@ public class UserController extends ModelController<User, UserService> {
             logger.info("rendering user profile");
             Map<String, Object> model = new HashMap<>();
             model.put("user", user);
-            return render(Templates.USER_PROFILE, model);
+            return render(request, Templates.USER_PROFILE, model);
         }
     }
 
@@ -79,13 +79,14 @@ public class UserController extends ModelController<User, UserService> {
             return "";
         }
         logger.info("Rendering login form");
-        return render(Templates.LOGIN, null);
+        return render(request, Templates.LOGIN, null);
     }
 
     public String login(Request request, Response response) {
         logger.info("User trying to log in");
         if(request.session().attribute("user") != null) {
             logger.error("Logged in user attempting to log in.");
+            setFlashMessage("You are already logged in", "error", request.session());
             if(acceptsJson(request)) {
                 logger.info("Returning empty JSON");
                 return gson.toJson(new JsonObject());
@@ -100,6 +101,7 @@ public class UserController extends ModelController<User, UserService> {
         if(email == null || email.trim().length() == 0 || password == null || password.trim().length() == 0) {
             logger.error("Invalid vales submitted for login. (email='" +
                     email + "',password='" + password + "')");
+            setFlashMessage("Invalid login request submitted", "error", request.session());
             if(acceptsJson(request)) {
                 logger.info("Returning empty JSON");
                 return gson.toJson(new JsonObject());
@@ -114,10 +116,12 @@ public class UserController extends ModelController<User, UserService> {
         String redirectPath;
         if(success) {
             logger.info("User authentication successful. Storing user in session");
+            setFlashMessage("Logged in successfully", "success", request.session());
             request.session().attribute("user", service.getOneByEmail(email));
             redirectPath = Paths.DASHBOARD;
         } else {
             logger.info("User authentication failed");
+            setFlashMessage("Authentication failed", "error", request.session());
             redirectPath = Paths.LOGIN;
         }
         if(acceptsJson(request)) {
@@ -134,6 +138,7 @@ public class UserController extends ModelController<User, UserService> {
         logger.info("Log out user");
         if(request.session().attribute("user") == null) {
             logger.error("Logout attempt with no user logged in");
+            setFlashMessage("You are not logged in", "error", request.session());
             if(acceptsJson(request)) {
                 logger.info("Returning empty JSON");
                 return gson.toJson(new JsonObject());
@@ -145,6 +150,7 @@ public class UserController extends ModelController<User, UserService> {
         }
         logger.info("Removing user from session");
         request.session().removeAttribute("user");
+        setFlashMessage("Logged out successfully", "success", request.session());
         if(acceptsJson(request)) {
             logger.info("Returning JSON response");
             return getOutcomeJson(true);
@@ -161,6 +167,7 @@ public class UserController extends ModelController<User, UserService> {
         if(request.session().attribute("user") == null) {
             logger.error("Request for edit profile form when no user logged in");
             logger.info("Redirecting to landing page");
+            setFlashMessage("You are not logged in", "error", request.session());
             response.redirect(Paths.LANDING_PAGE);
             return "";
         }
@@ -168,7 +175,7 @@ public class UserController extends ModelController<User, UserService> {
         Map<String, Object> model = new HashMap<>();
         model.put("user", user);
         logger.info("Rendering form for editing user with id " + user.getId());
-        return render(Templates.EDIT_USER, model);
+        return render(request, Templates.EDIT_USER, model);
     }
 
     @Override
@@ -177,7 +184,7 @@ public class UserController extends ModelController<User, UserService> {
         User loggedInUser = request.session().attribute("user");
         if(loggedInUser == null) {
             logger.error("Attempt to edit profile when no user logged in");
-            response.status(400);
+            setFlashMessage("You are not logged in", "error", request.session());
             if(acceptsJson(request)) {
                 logger.info("Returning empty JSON");
                 return gson.toJson(new JsonObject());
@@ -202,6 +209,7 @@ public class UserController extends ModelController<User, UserService> {
         }
         if(email == null && password == null) {
             logger.error("No values submitted in edit user request");
+            setFlashMessage("No values submitted", "error", request.session());
             if(acceptsJson(request)) {
                 logger.info("Returning empty JSON");
                 return gson.toJson(new JsonObject());
@@ -221,6 +229,7 @@ public class UserController extends ModelController<User, UserService> {
         }
         if(!hasChanges) {
             logger.error("Submitted edit profile request with no changes");
+            setFlashMessage("Submitted form with no changes", "error", request.session());
             if(acceptsJson(request)) {
                 logger.info("Returning empty JSON");
                 return gson.toJson(new JsonObject());
@@ -232,6 +241,11 @@ public class UserController extends ModelController<User, UserService> {
         }
         logger.info("Editing user's profile");
         boolean success = service.update(user);
+        if(success) {
+            setFlashMessage("Profile updated successfully", "success", request.session());
+        } else {
+            setFlashMessage("Failed to update profile", "error", request.session());
+        }
         if(acceptsJson(request)) {
             logger.info("Returning JSON response");
             return getOutcomeJson(success);
@@ -248,11 +262,12 @@ public class UserController extends ModelController<User, UserService> {
         if(request.session().attribute("user") != null) {
             logger.error("Logged in user attempting to go to registration page");
             logger.info("Redirecting to dashboard");
+            setFlashMessage("You are not logged in", "error", request.session());
             response.redirect(Paths.DASHBOARD);
             return "";
         }
         logger.info("Rendering registration page");
-        return render(Templates.REGISTRATION, null);
+        return render(request, Templates.REGISTRATION, null);
     }
 
     @Override
@@ -260,6 +275,7 @@ public class UserController extends ModelController<User, UserService> {
         logger.info("Registration form submitted");
         if(request.session().attribute("user") != null) {
             logger.error("Logged in user attempting to register");
+            setFlashMessage("You are already registered and logged in", "error", request.session());
             if(acceptsJson(request)) {
                 logger.info("Returning empty JSON");
                 return gson.toJson(new JsonObject());
@@ -271,6 +287,7 @@ public class UserController extends ModelController<User, UserService> {
         }
         if(!request.queryParams("password1").equals(request.queryParams("password2"))) {
             logger.error("Passwords aren't equal");
+            setFlashMessage("Passwords don't match", "error", request.session());
             if(acceptsJson(request)) {
                 logger.info("Returning empty JSON");
                 return gson.toJson(new JsonObject());
@@ -293,6 +310,7 @@ public class UserController extends ModelController<User, UserService> {
         }
         if(!user.isValid()) {
             logger.error("Invalid registration form submitted. User is not valid");
+            setFlashMessage("Invalid form submitted", "error", request.session());
             if(acceptsJson(request)) {
                 logger.info("Returning empty JSON");
                 return gson.toJson(new JsonObject());
@@ -304,6 +322,7 @@ public class UserController extends ModelController<User, UserService> {
         }
         if(service.getOneByEmail(user.getEmail()) != null) {
             logger.error("Invalid registration form submitted. The email address is already in use");
+            setFlashMessage("Email address already in use", "error", request.session());
             if(acceptsJson(request)) {
                 logger.info("Returning empty JSON");
                 return gson.toJson(new JsonObject());
@@ -319,6 +338,9 @@ public class UserController extends ModelController<User, UserService> {
         if(success) {
             logger.info("User registration successful. Logging user in");
             request.session().attribute("user", user);
+            setFlashMessage("Registered and logged in successfully", "success", request.session());
+        } else {
+            setFlashMessage("Failed to register", "error", request.session());
         }
         if(acceptsJson(request)) {
             logger.info("Returning JSON response");
@@ -337,6 +359,7 @@ public class UserController extends ModelController<User, UserService> {
         User user = request.session().attribute("user");
         if(user == null) {
             logger.error("Attempt to delete account when no user logged in");
+            setFlashMessage("You are not logged in", "error", request.session());
             if(acceptsJson(request)) {
                 logger.info("Returning empty JSON");
                 return gson.toJson(new JsonObject());
@@ -348,8 +371,13 @@ public class UserController extends ModelController<User, UserService> {
         }
         logger.info("Deleting user account");
         boolean success = service.delete(user.getId());
-        logger.info("Logging user out");
-        request.session().removeAttribute("user");
+        if(success) {
+            logger.info("Logging user out");
+            request.session().removeAttribute("user");
+            setFlashMessage("Your account was deleted successfully", "success", request.session());
+        } else {
+            setFlashMessage("Failed to delete account", "error", request.session());
+        }
         if(acceptsJson(request)) {
             logger.info("Returning JSON response");
             return getOutcomeJson(success);
@@ -360,6 +388,7 @@ public class UserController extends ModelController<User, UserService> {
         }
     }
 
+    @Override
     protected UserService getService() {
         return new UserService();
     }

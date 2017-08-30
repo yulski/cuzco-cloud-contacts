@@ -25,7 +25,7 @@ public class DefaultController extends Controller {
             return "";
         }
         logger.info("Rendering landing page");
-        return render(Templates.LANDING_PAGE, null);
+        return render(request, Templates.LANDING_PAGE, null);
     }
 
 }

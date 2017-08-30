@@ -32,6 +32,7 @@ public class ContactController extends ModelController<Contact, ContactService> 
         Contact contact = service.getOne(id);
         if(contact == null) {
             logger.error("No contact found for id " + id);
+            setFlashMessage("No contact with id " + id, "error", request.session());
             if(acceptsJson(request)) {
                 logger.info("Returning empty JSON");
                 return gson.toJson(new JsonObject());
@@ -48,7 +49,7 @@ public class ContactController extends ModelController<Contact, ContactService> 
             logger.info("Rendering contact page");
             Map<String, Object> model = new HashMap<>();
             model.put("contact", contact);
-            return render(Templates.CONTACT, model);
+            return render(request, Templates.CONTACT, model);
         }
     }
 
@@ -63,7 +64,7 @@ public class ContactController extends ModelController<Contact, ContactService> 
             logger.info("Rendering user's contact list");
             Map<String, Object> model = new HashMap<>();
             model.put("contacts", contacts);
-            return render(Templates.USER_CONTACTS, model);
+            return render(request, Templates.USER_CONTACTS, model);
         }
     }
 
@@ -74,6 +75,7 @@ public class ContactController extends ModelController<Contact, ContactService> 
         Contact contact = service.getOne(id);
         if(contact == null) {
             logger.error("No contact found for id " + id);
+            setFlashMessage("No contact with id " + id, "error", request.session());
             if(acceptsJson(request)) {
                 logger.info("Returning empty JSON");
                 return gson.toJson(new JsonObject());
@@ -86,7 +88,7 @@ public class ContactController extends ModelController<Contact, ContactService> 
         logger.info("Rendering contact edit page");
         Map<String, Object> model = new HashMap<>();
         model.put("contact", contact);
-        return render(Templates.EDIT_CONTACT, model);
+        return render(request, Templates.EDIT_CONTACT, model);
     }
 
     @Override
@@ -96,6 +98,7 @@ public class ContactController extends ModelController<Contact, ContactService> 
         Contact oldContact = service.getOne(id);
         if(oldContact == null) {
             logger.error("No contact found for id " + id);
+            setFlashMessage("No contact with id " + id, "error", request.session());
             if(acceptsJson(request)) {
                 logger.info("Returning empty JSON");
                 return gson.toJson(new JsonObject());
@@ -120,6 +123,11 @@ public class ContactController extends ModelController<Contact, ContactService> 
                     .build();
         }
         boolean success = service.update(contact);
+        if(success) {
+            setFlashMessage("Contact information updated successfully", "success", request.session());
+        } else {
+            setFlashMessage("Failed to update contact information", "error", request.session());
+        }
         if(acceptsJson(request)) {
             logger.info("Sending JSON response");
             return getOutcomeJson(success);
@@ -135,7 +143,7 @@ public class ContactController extends ModelController<Contact, ContactService> 
         logger.info("Get create contact form");
         User user = request.session().attribute("user");
         logger.info("Rendering create contact page");
-        return render(Templates.CREATE_CONTACT, null);
+        return render(request, Templates.CREATE_CONTACT, null);
     }
 
     @Override
@@ -155,6 +163,11 @@ public class ContactController extends ModelController<Contact, ContactService> 
         }
         int createdId = service.create(contact);
         boolean success = createdId != Service.UPDATE_FAILURE;
+        if(success) {
+            setFlashMessage("Created contact successfully", "success", request.session());
+        } else {
+            setFlashMessage("Failed to create contact", "error", request.session());
+        }
         if(acceptsJson(request)) {
             logger.info("Sending JSON response");
             return getOutcomeJson(success);
@@ -170,6 +183,11 @@ public class ContactController extends ModelController<Contact, ContactService> 
         logger.info("Delete contact");
         int id = Integer.parseInt(request.params("id"));
         boolean success = service.delete(id);
+        if(success) {
+            setFlashMessage("Contact deleted successfully", "success", request.session());
+        } else {
+            setFlashMessage("Failed to delete contact", "error", request.session());
+        }
         if(acceptsJson(request)) {
             logger.info("Sending JSON response");
             return getOutcomeJson(success);
