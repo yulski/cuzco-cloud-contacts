@@ -1,5 +1,7 @@
 package com.yulski.cuzco.controllers;
 
+import com.yulski.cuzco.models.User;
+import com.yulski.cuzco.util.Paths;
 import com.yulski.cuzco.util.Renderer;
 import com.yulski.cuzco.util.Templates;
 import org.slf4j.Logger;
@@ -16,6 +18,12 @@ public class DefaultController extends Controller {
     }
 
     public String getLandingPage(Request request, Response response) {
+        User user = request.session().attribute("user");
+        if(user != null) {
+            logger.info("Redirecting to dashboard");
+            response.redirect(Paths.DASHBOARD);
+            return "";
+        }
         logger.info("Rendering landing page");
         return render(Templates.LANDING_PAGE, null);
     }

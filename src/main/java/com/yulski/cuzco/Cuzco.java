@@ -32,7 +32,7 @@ public class Cuzco {
         post(Paths.PROFILE, userController::delete);
         get(Paths.LOGIN, userController::getLoginForm);
         post(Paths.LOGIN, userController::login);
-        post(Paths.LOGOUT, userController::logout);
+        get(Paths.LOGOUT, userController::logout);
         get(Paths.EDIT_PROFILE, userController::getEditForm);
         // TODO change to PUT
         post(Paths.EDIT_PROFILE, userController::edit);
