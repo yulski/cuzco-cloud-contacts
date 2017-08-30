@@ -5,10 +5,7 @@ import com.yulski.cuzco.models.Contact;
 import com.yulski.cuzco.models.User;
 import com.yulski.cuzco.services.ContactService;
 import com.yulski.cuzco.services.Service;
-import com.yulski.cuzco.util.FlashMessageManager;
-import com.yulski.cuzco.util.Paths;
-import com.yulski.cuzco.util.Renderer;
-import com.yulski.cuzco.util.Templates;
+import com.yulski.cuzco.util.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import spark.Request;
@@ -17,6 +14,9 @@ import spark.Response;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
+import static com.yulski.cuzco.util.RequestUtil.acceptsJson;
+import static com.yulski.cuzco.util.RequestUtil.isJson;
 
 public class ContactController extends ModelController<Contact, ContactService> {
 

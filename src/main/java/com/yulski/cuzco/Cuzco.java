@@ -3,10 +3,7 @@ package com.yulski.cuzco;
 import com.yulski.cuzco.controllers.ContactController;
 import com.yulski.cuzco.controllers.DefaultController;
 import com.yulski.cuzco.controllers.UserController;
-import com.yulski.cuzco.util.Env;
-import com.yulski.cuzco.util.FlashMessageManager;
-import com.yulski.cuzco.util.Paths;
-import com.yulski.cuzco.util.Renderer;
+import com.yulski.cuzco.util.*;
 import spark.template.jtwig.JtwigTemplateEngine;
 
 import static spark.Spark.*;
@@ -22,6 +19,21 @@ public class Cuzco {
         ContactController contactController = new ContactController(renderer, flash);
 
         port(Env.getPort());
+
+        // filters
+        Filters filters = new Filters(flash);
+
+        before(Paths.DASHBOARD, filters.loggedIn);
+        before(Paths.PROFILE, filters.loggedIn);
+        before(Paths.LOGIN, filters.notLoggedIn);
+        before(Paths.LOGOUT, filters.loggedIn);
+        before(Paths.EDIT_PROFILE, filters.loggedIn);
+        before(Paths.REGISTRATION, filters.notLoggedIn);
+
+        before(Paths.CONTACT, filters.loggedIn);
+        before(Paths.USER_CONTACTS, filters.loggedIn);
+        before(Paths.EDIT_CONTACT, filters.loggedIn);
+        before(Paths.CREATE_CONTACT, filters.loggedIn);
 
         // default routes
         get(Paths.LANDING_PAGE, defaultController::getLandingPage);

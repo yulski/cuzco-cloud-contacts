@@ -20,6 +20,9 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import static com.yulski.cuzco.util.RequestUtil.acceptsJson;
+import static com.yulski.cuzco.util.RequestUtil.isJson;
+
 public class UserController extends ModelController<User, UserService> {
 
     private static final Logger logger = LoggerFactory.getLogger(UserController.class.getCanonicalName());
@@ -31,12 +34,6 @@ public class UserController extends ModelController<User, UserService> {
     public String getDashboard(Request request, Response response) {
         logger.info("Get user dashboard");
         User user = request.session().attribute("user");
-        if(user == null) {
-            logger.error("Attempting to view dashboard when no user logged in");
-            logger.info("Redirecting to landing page");
-            response.redirect(Paths.LANDING_PAGE);
-            return "";
-        }
         logger.info("Getting user contacts");
         List<Contact> contacts = new ContactService().getContactsForUser(user); // TODO fix this - this shouldn't be directly instantiating a ContactService
         Map<String, Object> model = new HashMap<>();
@@ -49,17 +46,6 @@ public class UserController extends ModelController<User, UserService> {
     public String getOne(Request request, Response response) {
         logger.info("Get user profile");
         User user = request.session().attribute("user");
-        if(user == null) {
-            logger.error("Attempting to view profile when no user logged in");
-            if(acceptsJson(request)) {
-                logger.info("returning empty JSON");
-                return gson.toJson(new JsonObject());
-            } else {
-                logger.info("Redirecting to landing page");
-                response.redirect(Paths.LANDING_PAGE);
-                return "";
-            }
-        }
         if (acceptsJson(request)) {
             logger.info("Returning user as JSON");
             return gson.toJson(user);
@@ -73,30 +59,12 @@ public class UserController extends ModelController<User, UserService> {
 
     public String getLoginForm(Request request, Response response) {
         logger.info("Get login form");
-        if(request.session().attribute("user") != null) {
-            logger.error("User is already logged in.");
-            logger.info("Redirecting to dashboard");
-            response.redirect(Paths.DASHBOARD);
-            return "";
-        }
         logger.info("Rendering login form");
         return render(request, Templates.LOGIN, null);
     }
 
     public String login(Request request, Response response) {
         logger.info("User trying to log in");
-        if(request.session().attribute("user") != null) {
-            logger.error("Logged in user attempting to log in.");
-            flash.setFlashMessage("You are already logged in", "error", request.session());
-            if(acceptsJson(request)) {
-                logger.info("Returning empty JSON");
-                return gson.toJson(new JsonObject());
-            } else {
-                logger.info("Redirecting to dashboard");
-                response.redirect(Paths.DASHBOARD);
-                return "";
-            }
-        }
         String email = request.queryParams("email");
         String password = request.queryParams("password");
         if(email == null || email.trim().length() == 0 || password == null || password.trim().length() == 0) {
@@ -137,18 +105,6 @@ public class UserController extends ModelController<User, UserService> {
 
     public String logout(Request request, Response response) {
         logger.info("Log out user");
-        if(request.session().attribute("user") == null) {
-            logger.error("Logout attempt with no user logged in");
-            flash.setFlashMessage("You are not logged in", "error", request.session());
-            if(acceptsJson(request)) {
-                logger.info("Returning empty JSON");
-                return gson.toJson(new JsonObject());
-            } else {
-                logger.info("Redirecting to landing page");
-                response.redirect(Paths.LANDING_PAGE);
-                return "";
-            }
-        }
         logger.info("Removing user from session");
         request.session().removeAttribute("user");
         flash.setFlashMessage("Logged out successfully", "success", request.session());
@@ -165,13 +121,6 @@ public class UserController extends ModelController<User, UserService> {
     @Override
     public String getEditForm(Request request, Response response) {
         logger.info("Getting edit profile page");
-        if(request.session().attribute("user") == null) {
-            logger.error("Request for edit profile form when no user logged in");
-            logger.info("Redirecting to landing page");
-            flash.setFlashMessage("You are not logged in", "error", request.session());
-            response.redirect(Paths.LANDING_PAGE);
-            return "";
-        }
         User user = request.session().attribute("user");
         Map<String, Object> model = new HashMap<>();
         model.put("user", user);
@@ -183,18 +132,6 @@ public class UserController extends ModelController<User, UserService> {
     public String edit(Request request, Response response) {
         logger.info("Editing user profile");
         User loggedInUser = request.session().attribute("user");
-        if(loggedInUser == null) {
-            logger.error("Attempt to edit profile when no user logged in");
-            flash.setFlashMessage("You are not logged in", "error", request.session());
-            if(acceptsJson(request)) {
-                logger.info("Returning empty JSON");
-                return gson.toJson(new JsonObject());
-            } else {
-                logger.info("Redirecting to landing page");
-                response.redirect(Paths.LANDING_PAGE);
-                return "";
-            }
-        }
         User user = loggedInUser;
         String email;
         String password;
@@ -260,13 +197,6 @@ public class UserController extends ModelController<User, UserService> {
     @Override
     public String getCreateForm(Request request, Response response) {
         logger.info("Get registration form");
-        if(request.session().attribute("user") != null) {
-            logger.error("Logged in user attempting to go to registration page");
-            logger.info("Redirecting to dashboard");
-            flash.setFlashMessage("You are not logged in", "error", request.session());
-            response.redirect(Paths.DASHBOARD);
-            return "";
-        }
         logger.info("Rendering registration page");
         return render(request, Templates.REGISTRATION, null);
     }
@@ -274,18 +204,6 @@ public class UserController extends ModelController<User, UserService> {
     @Override
     public String create(Request request, Response response) {
         logger.info("Registration form submitted");
-        if(request.session().attribute("user") != null) {
-            logger.error("Logged in user attempting to register");
-            flash.setFlashMessage("You are already registered and logged in", "error", request.session());
-            if(acceptsJson(request)) {
-                logger.info("Returning empty JSON");
-                return gson.toJson(new JsonObject());
-            } else {
-                logger.info("Redirecting to dashboard");
-                response.redirect(Paths.DASHBOARD);
-                return "";
-            }
-        }
         if(!request.queryParams("password1").equals(request.queryParams("password2"))) {
             logger.error("Passwords aren't equal");
             flash.setFlashMessage("Passwords don't match", "error", request.session());
@@ -358,18 +276,6 @@ public class UserController extends ModelController<User, UserService> {
     public String delete(Request request, Response response) {
         logger.info("Request to delete user account");
         User user = request.session().attribute("user");
-        if(user == null) {
-            logger.error("Attempt to delete account when no user logged in");
-            flash.setFlashMessage("You are not logged in", "error", request.session());
-            if(acceptsJson(request)) {
-                logger.info("Returning empty JSON");
-                return gson.toJson(new JsonObject());
-            } else {
-                logger.info("Redirecting to landing page");
-                response.redirect(Paths.LANDING_PAGE);
-                return "";
-            }
-        }
         logger.info("Deleting user account");
         boolean success = service.delete(user.getId());
         if(success) {

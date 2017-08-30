@@ -22,15 +22,6 @@ public abstract class Controller {
         gson = new Gson();
     }
 
-    protected boolean acceptsJson(Request request) {
-        return request.headers("Accept").contains("application/json");
-    }
-
-    protected boolean isJson(Request request) {
-        return request.headers("Content-Type").contains("application/json");
-    }
-
-
     protected String render(Request request, String templateName, Map<String, Object> model) {
         if(model == null) {
             model = new HashMap<>();
