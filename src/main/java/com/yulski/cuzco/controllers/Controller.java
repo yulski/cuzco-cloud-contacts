@@ -27,6 +27,7 @@ public abstract class Controller {
         }
         model.put(SessionManager.FLASH_MESSAGE, session.getFlashMessage(request.session()));
         model.put(SessionManager.FLASH_MESSAGE_TYPE, session.getFlashMessageType(request.session()));
+        model.put(SessionManager.USER, session.getUser(request.session()));
         return renderer.render(templateName, model);
     }
 

@@ -38,7 +38,6 @@ public class UserController extends ModelController<User, UserService> {
         logger.info("Getting user contacts");
         List<Contact> contacts = new ContactService().getContactsForUser(user); // TODO fix this - this shouldn't be directly instantiating a ContactService
         Map<String, Object> model = new HashMap<>();
-        model.put("user", user);
         model.put("contacts", contacts);
         return render(request, Templates.DASHBOARD, model);
     }
@@ -53,7 +52,6 @@ public class UserController extends ModelController<User, UserService> {
         } else {
             logger.info("rendering user profile");
             Map<String, Object> model = new HashMap<>();
-            model.put("user", user);
             return render(request, Templates.USER_PROFILE, model);
         }
     }
@@ -124,7 +122,6 @@ public class UserController extends ModelController<User, UserService> {
         logger.info("Getting edit profile page");
         User user = session.getUser(request.session());
         Map<String, Object> model = new HashMap<>();
-        model.put("user", user);
         logger.info("Rendering form for editing user with id " + user.getId());
         return render(request, Templates.EDIT_USER, model);
     }
@@ -269,10 +266,8 @@ public class UserController extends ModelController<User, UserService> {
     @Override
     public String getDeleteForm(Request request, Response response) {
         logger.info("Get delete account form");
-        User user = session.getUser(request.session());
         logger.info("Rendering delete user form");
         Map<String, Object> model = new HashMap<>();
-        model.put("user", user);
         return render(request, Templates.DELETE_USER, model);
     }
 

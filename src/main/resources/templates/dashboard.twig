@@ -10,22 +10,6 @@
 
 {% block main %}
     <div>
-        <ul>
-            <li>
-                <a href="{{ path(PATH_USER_CONTACTS) }}">Contact list</a>
-            </li>
-            <li>
-                <a href="{{ path(PATH_CREATE_CONTACT) }}">Create contact</a>
-            </li>
-            <li>
-                <a href="{{ path(PATH_PROFILE) }}">View your profile</a>
-            </li>
-            <li>
-                <a href="{{ path(PATH_LOGOUT) }}">Log out</a>
-            </li>
-        </ul>
-    </div>
-    <div>
         {% if contacts %}
             <h3>Your contacts</h3>
             <ul>
