@@ -9,6 +9,10 @@
 {% endblock %}
 
 {% block main %}
+    <div>
+        <a href="{{ path(PATH_EDIT_PROFILE) }}">Edit profile</a><br/>
+        <a href="{{ path(PATH_DELETE_PROFILE) }}">Delete profile</a>
+    </div>
     Email: {{ user.getEmail() }}<br/>
     Some other info...
 {% endblock %}

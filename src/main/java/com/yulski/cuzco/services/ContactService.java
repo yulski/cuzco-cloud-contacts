@@ -137,4 +137,20 @@ public class ContactService extends Service<Contact> {
         }
         return userContacts;
     }
+
+    public boolean deleteContactsForUser(User user) {
+        Connection connection = db.getConnection();
+        String sql = String.format("DELETE FROM \"%s\".%s WHERE %s = ?", SCHEMA, Contact.Contract.TABLE_NAME,
+                User.Contract.ID_COLUMN);
+        List<Contact> userContacts = getContactsForUser(user);
+        try {
+            PreparedStatement statement = connection.prepareStatement(sql);
+            statement.setInt(1, user.getId());
+            logger.info("ContactService executing query: '" + sql + "'");
+            return statement.executeUpdate() == userContacts.size();
+        } catch(SQLException e) {
+            logger.error(e.getMessage(), e);
+        }
+        return false;
+    }
 }

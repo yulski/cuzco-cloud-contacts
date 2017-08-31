@@ -273,9 +273,29 @@ public class UserController extends ModelController<User, UserService> {
     }
 
     @Override
+    public String getDeleteForm(Request request, Response response) {
+        logger.info("Get delete account form");
+        User user = request.session().attribute("user");
+        logger.info("Rendering delete user form");
+        Map<String, Object> model = new HashMap<>();
+        model.put("user", user);
+        return render(request, Templates.DELETE_USER, model);
+    }
+
+    @Override
     public String delete(Request request, Response response) {
         logger.info("Request to delete user account");
         User user = request.session().attribute("user");
+        logger.info("Authenticating request");
+        if(!service.authenticate(user.getEmail(), request.queryParams("password"))) {
+            logger.error("Incorrect password");
+            flash.setFlashMessage("The password you entered is incorrect", "error", request.session());
+            logger.info("Redirecting to delete user page");
+            response.redirect(Paths.DELETE_PROFILE);
+            return "";
+        }
+        logger.info("Deleting user's contacts");
+        new ContactService().deleteContactsForUser(user);
         logger.info("Deleting user account");
         boolean success = service.delete(user.getId());
         if(success) {

@@ -180,6 +180,17 @@ public class ContactController extends ModelController<Contact, ContactService> 
     }
 
     @Override
+    public String getDeleteForm(Request request, Response response) {
+        logger.info("Get delete contact form");
+        int id = Integer.parseInt(request.params("id"));
+        Contact contact = service.getOne(id);
+        logger.info("Rendering delete contact form");
+        Map<String, Object> model = new HashMap<>();
+        model.put("contact", contact);
+        return render(request, Templates.DELETE_CONTACT, model);
+    }
+
+    @Override
     public String delete(Request request, Response response) {
         logger.info("Delete contact");
         int id = Integer.parseInt(request.params("id"));

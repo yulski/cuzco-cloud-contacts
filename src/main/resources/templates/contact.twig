@@ -9,6 +9,10 @@
 {% endblock %}
 
 {% block main %}
+    <div>
+        <a href="{{ path(PATH_EDIT_CONTACT, {'id': toString(contact.getId())}) }}">Edit contact</a>
+        <a href="{{ path(PATH_DELETE_CONTACT, {'id': toString(contact.getId())}) }}">Delete contact</a>
+    </div>
     Name: {{ contact.getName() }}
     Phone number: {{ contact.getPhoneNumber() }}
 {% endblock %}

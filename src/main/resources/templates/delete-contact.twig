@@ -1,0 +1,16 @@
+{% extends 'layout.twig' %}
+
+{% block title %}
+    Cuzco delete contact
+{% endblock %}
+
+{% block pageHeading %}
+    Delete contact {{ contact.getName() }}
+{% endblock %}
+
+{% block main %}
+    Are you sure you want to delete contact {{ contact.getName() }}? This action is irreversible.<br/>
+    <form method="post" action="{{ path(PATH_DELETE_CONTACT, {'id': toString(contact.getId())}) }}">
+        <input type="submit" value="Delete"/>
+    </form>
+{% endblock %}

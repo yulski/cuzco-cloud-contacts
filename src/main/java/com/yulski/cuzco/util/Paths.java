@@ -11,7 +11,8 @@ public class Paths {
     public static final String PROFILE = "/profile";
     public static final String LOGIN = "/login";
     public static final String LOGOUT = "/logout";
-    public static final String EDIT_PROFILE = "/user/edit";
+    public static final String EDIT_PROFILE = "/edit-profile";
+    public static final String DELETE_PROFILE = "/delete-profile";
     public static final String REGISTRATION = "/register";
 
     // Contact paths
@@ -19,6 +20,7 @@ public class Paths {
     public static final String USER_CONTACTS = "/my-contacts";
     public static final String EDIT_CONTACT = "/edit-contact/:id";
     public static final String CREATE_CONTACT = "/create-contact";
+    public static final String DELETE_CONTACT = "/delete-contact/:id";
 
     public static Map<String, Object> getMap() {
         Map<String, Object> map = new HashMap<>();
@@ -28,11 +30,13 @@ public class Paths {
         map.put("LOGIN", LOGIN);
         map.put("LOGOUT", LOGOUT);
         map.put("EDIT_PROFILE", EDIT_PROFILE);
+        map.put("DELETE_PROFILE", DELETE_PROFILE);
         map.put("REGISTRATION", REGISTRATION);
         map.put("CONTACT", CONTACT);
         map.put("USER_CONTACTS", USER_CONTACTS);
         map.put("EDIT_CONTACT", EDIT_CONTACT);
         map.put("CREATE_CONTACT", CREATE_CONTACT);
+        map.put("DELETE_CONTACT", DELETE_CONTACT);
         return map;
     }
 

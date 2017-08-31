@@ -25,6 +25,8 @@ public abstract class ModelController<T extends Model, V extends Service<T>> ext
 
     public abstract String create(Request request, Response response);
 
+    public abstract String getDeleteForm(Request request, Response response);
+
     public abstract String delete(Request request, Response response);
 
     protected abstract V getService();

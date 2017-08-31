@@ -1,0 +1,21 @@
+{% extends 'layout.twig' %}
+
+{% block title %}
+    Cuzco delete account
+{% endblock %}
+
+{% block pageHeading %}
+    Delete your account
+{% endblock %}
+
+{% block main %}
+    Are you sure you want to delete your account? All of your contacts and your profile information will be deleted.
+    This action is irreversible.<br/>
+    <form method="post" action="{{ path(PATH_DELETE_PROFILE) }}">
+        <section>
+            <label for="password">Confirm password: </label>
+            <input type="password" id="password" name="password" required/>
+        </section>
+        <input type="submit" value="Delete"/>
+    </form>
+{% endblock %}
