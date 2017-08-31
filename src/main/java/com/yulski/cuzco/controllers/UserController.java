@@ -157,7 +157,7 @@ public class UserController extends ModelController<User, UserService> {
                 return gson.toJson(new JsonObject());
             } else {
                 logger.info("Redirecting to dashboard");
-                response.redirect(Paths.DASHBOARD);
+                response.redirect(Paths.EDIT_PROFILE);
                 return "";
             }
         }
