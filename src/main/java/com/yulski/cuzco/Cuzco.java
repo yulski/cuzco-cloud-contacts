@@ -22,19 +22,19 @@ public class Cuzco {
         // filters
         Filters filters = new Filters(session);
 
-        before(Paths.DASHBOARD, filters.loggedIn);
-        before(Paths.PROFILE, filters.loggedIn);
-        before(Paths.LOGIN, filters.notLoggedIn);
-        before(Paths.LOGOUT, filters.loggedIn);
-        before(Paths.EDIT_PROFILE, filters.loggedIn);
-        before(Paths.DELETE_PROFILE, filters.loggedIn);
-        before(Paths.REGISTRATION, filters.notLoggedIn);
+        before(Paths.DASHBOARD, filters.loggedIn(Paths.LANDING_PAGE));
+        before(Paths.PROFILE, filters.loggedIn(Paths.LOGIN));
+        before(Paths.LOGIN, filters.notLoggedIn(Paths.DASHBOARD));
+        before(Paths.LOGOUT, filters.loggedIn(Paths.LOGIN));
+        before(Paths.EDIT_PROFILE, filters.loggedIn(Paths.LOGIN));
+        before(Paths.DELETE_PROFILE, filters.loggedIn(Paths.LOGIN));
+        before(Paths.REGISTRATION, filters.notLoggedIn(Paths.DASHBOARD));
 
-        before(Paths.CONTACT, filters.loggedIn, filters.contactAccess);
-        before(Paths.USER_CONTACTS, filters.loggedIn);
-        before(Paths.EDIT_CONTACT, filters.loggedIn, filters.contactAccess);
-        before(Paths.CREATE_CONTACT, filters.loggedIn);
-        before(Paths.DELETE_CONTACT, filters.loggedIn, filters.contactAccess);
+        before(Paths.CONTACT, filters.loggedIn(Paths.LOGIN), filters.contactAccess(Paths.DASHBOARD));
+        before(Paths.USER_CONTACTS, filters.loggedIn(Paths.LOGIN));
+        before(Paths.EDIT_CONTACT, filters.loggedIn(Paths.LOGIN), filters.contactAccess(Paths.DASHBOARD));
+        before(Paths.CREATE_CONTACT, filters.loggedIn(Paths.LOGIN));
+        before(Paths.DELETE_CONTACT, filters.loggedIn(Paths.LOGIN), filters.contactAccess(Paths.DASHBOARD));
 
         // default routes
         get(Paths.LANDING_PAGE, defaultController::getLandingPage);
