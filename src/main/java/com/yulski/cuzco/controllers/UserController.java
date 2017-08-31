@@ -11,6 +11,7 @@ import com.yulski.cuzco.util.SessionManager;
 import com.yulski.cuzco.util.Paths;
 import com.yulski.cuzco.util.Renderer;
 import com.yulski.cuzco.util.Templates;
+import org.mindrot.jbcrypt.BCrypt;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import spark.Request;
@@ -131,23 +132,26 @@ public class UserController extends ModelController<User, UserService> {
     @Override
     public String edit(Request request, Response response) {
         logger.info("Editing user profile");
-        User loggedInUser = session.getUser(request.session());
-        User user = loggedInUser;
+        User user = session.getUser(request.session());
+        String oldEmail = user.getEmail();
+        String oldPassword = user.getPassword();
         String email;
-        String password;
-        boolean hasChanges = false;
+        String password1;
+        String password2;
         if(isJson(request)) {
             logger.info("Processing JSON request to edit user profile");
             JsonObject json = new JsonParser().parse(request.body()).getAsJsonObject();
             email = json.get("email").getAsString();
-            password = json.get("password").getAsString();
+            password1 = json.get("password1").getAsString();
+            password2 = json.get("password2").getAsString();
         } else {
             email = request.queryParams("email");
-            password = request.queryParams("password");
+            password1 = request.queryParams("password1");
+            password2 = request.queryParams("password2");
         }
-        if(email == null && password == null) {
-            logger.error("No values submitted in edit user request");
-            session.setFlashMessage("No values submitted", "error", request.session());
+        if(!password1.equals(password2)) {
+            logger.error("Passwords don't match");
+            session.setFlashMessage("The submitted passwords do not match", "error", request.session());
             if(acceptsJson(request)) {
                 logger.info("Returning empty JSON");
                 return gson.toJson(new JsonObject());
@@ -157,25 +161,11 @@ public class UserController extends ModelController<User, UserService> {
                 return "";
             }
         }
-        if(!email.equals(loggedInUser.getEmail())) {
-            hasChanges = true;
+        if(!email.equals(oldEmail)) {
             user.setEmail(email);
         }
-        if(!password.equals(loggedInUser.getPassword())) {
-            hasChanges = true;
-            user.setPassword(password);
-        }
-        if(!hasChanges) {
-            logger.error("Submitted edit profile request with no changes");
-            session.setFlashMessage("Submitted form with no changes", "error", request.session());
-            if(acceptsJson(request)) {
-                logger.info("Returning empty JSON");
-                return gson.toJson(new JsonObject());
-            } else {
-                logger.info("Redirecting to dashboard");
-                response.redirect(Paths.DASHBOARD);
-                return "";
-            }
+        if(!BCrypt.checkpw(password1, oldPassword)) {
+            user.setPassword(BCrypt.hashpw(password1, BCrypt.gensalt()));
         }
         logger.info("Editing user's profile");
         boolean success = service.update(user);
@@ -183,6 +173,9 @@ public class UserController extends ModelController<User, UserService> {
             session.setFlashMessage("Profile updated successfully", "success", request.session());
         } else {
             session.setFlashMessage("Failed to update profile", "error", request.session());
+            logger.info("Reverting user email and password");
+            user.setEmail(oldEmail);
+            user.setPassword(oldPassword);
         }
         if(acceptsJson(request)) {
             logger.info("Returning JSON response");
