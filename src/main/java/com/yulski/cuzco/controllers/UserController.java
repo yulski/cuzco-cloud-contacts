@@ -256,6 +256,7 @@ public class UserController extends ModelController<User, UserService> {
         boolean success = createdId != Service.UPDATE_FAILURE;
         if(success) {
             logger.info("User registration successful. Logging user in");
+            user.setId(createdId);
             request.session().attribute("user", user);
             flash.setFlashMessage("Registered and logged in successfully", "success", request.session());
         } else {
