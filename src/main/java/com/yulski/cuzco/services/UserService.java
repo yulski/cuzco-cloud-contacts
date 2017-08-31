@@ -1,5 +1,6 @@
 package com.yulski.cuzco.services;
 
+import com.yulski.cuzco.models.Contact;
 import com.yulski.cuzco.models.User;
 import org.mindrot.jbcrypt.BCrypt;
 import org.slf4j.Logger;
@@ -119,13 +120,26 @@ public class UserService extends Service<User> {
     @Override
     public boolean delete(int id) {
         Connection connection = db.getConnection();
-        String sql = String.format("DELETE FROM \"%s\".%s WHERE %s = ?",
+        String contactSql = String.format("DELETE FROM \"%s\".%s WHERE %s = ?",
+                SCHEMA, Contact.Contract.TABLE_NAME, Contact.Contract.USER_ID_COLUMN);
+        String userSql = String.format("DELETE FROM \"%s\".%s WHERE %s = ?",
                 SCHEMA, User.Contract.TABLE_NAME, User.Contract.ID_COLUMN);
         try {
-            PreparedStatement statement = connection.prepareStatement(sql);
-            statement.setInt(1, id);
-            logger.info("Executing query: '" + sql + "'");
-            return statement.executeUpdate() == 1;
+            connection.setAutoCommit(false);
+            PreparedStatement contactStatement = connection.prepareStatement(contactSql);
+            PreparedStatement userStatement = connection.prepareStatement(userSql);
+            contactStatement.setInt(1, id);
+            userStatement.setInt(1, id);
+            logger.info("Executing query: '" + contactSql + "'");
+            contactStatement.executeUpdate();
+            logger.info("Executing query: '" + userSql + "'");
+            boolean success = userStatement.executeUpdate() == 1;
+            connection.commit();
+            if(!success) {
+                logger.error("Deleting user failed. Rolling back.");
+                connection.rollback();
+            }
+            return success;
         } catch(SQLException e) {
             logger.error(e.getMessage(), e);
         }

@@ -294,8 +294,6 @@ public class UserController extends ModelController<User, UserService> {
             response.redirect(Paths.DELETE_PROFILE);
             return "";
         }
-        logger.info("Deleting user's contacts");
-        new ContactService().deleteContactsForUser(user);
         logger.info("Deleting user account");
         boolean success = service.delete(user.getId());
         if(success) {
