@@ -2,15 +2,15 @@ package com.yulski.cuzco.controllers;
 
 import com.yulski.cuzco.models.Model;
 import com.yulski.cuzco.services.Service;
-import com.yulski.cuzco.util.FlashMessageManager;
+import com.yulski.cuzco.util.SessionManager;
 import com.yulski.cuzco.util.Renderer;
 import spark.Request;
 import spark.Response;
 
 public abstract class ModelController<T extends Model, V extends Service<T>> extends Controller {
 
-    public ModelController(Renderer renderer, FlashMessageManager flash) {
-        super(renderer, flash);
+    public ModelController(Renderer renderer, SessionManager session) {
+        super(renderer, session);
     }
 
     protected V service = getService();

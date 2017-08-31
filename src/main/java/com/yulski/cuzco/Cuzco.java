@@ -4,7 +4,6 @@ import com.yulski.cuzco.controllers.ContactController;
 import com.yulski.cuzco.controllers.DefaultController;
 import com.yulski.cuzco.controllers.UserController;
 import com.yulski.cuzco.util.*;
-import spark.template.jtwig.JtwigTemplateEngine;
 
 import static spark.Spark.*;
 
@@ -12,16 +11,16 @@ public class Cuzco {
 
     public static void main(String[] args) {
         Renderer renderer = new Renderer(Env.getTemplatesDir());
-        FlashMessageManager flash = new FlashMessageManager();
+        SessionManager session = new SessionManager();
 
-        DefaultController defaultController = new DefaultController(renderer, flash);
-        UserController userController = new UserController(renderer, flash);
-        ContactController contactController = new ContactController(renderer, flash);
+        DefaultController defaultController = new DefaultController(renderer, session);
+        UserController userController = new UserController(renderer, session);
+        ContactController contactController = new ContactController(renderer, session);
 
         port(Env.getPort());
 
         // filters
-        Filters filters = new Filters(flash);
+        Filters filters = new Filters(session);
 
         before(Paths.DASHBOARD, filters.loggedIn);
         before(Paths.PROFILE, filters.loggedIn);

@@ -1,6 +1,5 @@
 package com.yulski.cuzco.controllers;
 
-import com.google.gson.JsonObject;
 import com.yulski.cuzco.models.Contact;
 import com.yulski.cuzco.models.User;
 import com.yulski.cuzco.services.ContactService;
@@ -22,8 +21,8 @@ public class ContactController extends ModelController<Contact, ContactService> 
 
     private static final Logger logger = LoggerFactory.getLogger(ContactController.class.getCanonicalName());
 
-    public ContactController(Renderer renderer, FlashMessageManager flash) {
-        super(renderer, flash);
+    public ContactController(Renderer renderer, SessionManager session) {
+        super(renderer, session);
     }
 
     @Override
@@ -44,7 +43,7 @@ public class ContactController extends ModelController<Contact, ContactService> 
 
     public String getAllForUser(Request request, Response response) {
         logger.info("Get all user contacts");
-        User user = request.session().attribute("user");
+        User user = session.getUser(request.session());
         List<Contact> contacts = service.getContactsForUser(user);
         if(acceptsJson(request)) {
             logger.info("Returning list of user contacts as JSON");
@@ -89,9 +88,9 @@ public class ContactController extends ModelController<Contact, ContactService> 
         }
         boolean success = service.update(contact);
         if(success) {
-            flash.setFlashMessage("Contact information updated successfully", "success", request.session());
+            session.setFlashMessage("Contact information updated successfully", "success", request.session());
         } else {
-            flash.setFlashMessage("Failed to update contact information", "error", request.session());
+            session.setFlashMessage("Failed to update contact information", "error", request.session());
         }
         if(acceptsJson(request)) {
             logger.info("Sending JSON response");
@@ -106,7 +105,6 @@ public class ContactController extends ModelController<Contact, ContactService> 
     @Override
     public String getCreateForm(Request request, Response response) {
         logger.info("Get create contact form");
-        User user = request.session().attribute("user");
         logger.info("Rendering create contact page");
         return render(request, Templates.CREATE_CONTACT, null);
     }
@@ -123,15 +121,15 @@ public class ContactController extends ModelController<Contact, ContactService> 
             contact = Contact.builder()
                     .name(request.queryParams("name"))
                     .phoneNumber(request.queryParams("phoneNumber"))
-                    .user(request.session().attribute("user"))
+                    .user(session.getUser(request.session()))
                     .build();
         }
         int createdId = service.create(contact);
         boolean success = createdId != Service.UPDATE_FAILURE;
         if(success) {
-            flash.setFlashMessage("Created contact successfully", "success", request.session());
+            session.setFlashMessage("Created contact successfully", "success", request.session());
         } else {
-            flash.setFlashMessage("Failed to create contact", "error", request.session());
+            session.setFlashMessage("Failed to create contact", "error", request.session());
         }
         if(acceptsJson(request)) {
             logger.info("Sending JSON response");
@@ -160,9 +158,9 @@ public class ContactController extends ModelController<Contact, ContactService> 
         int id = Integer.parseInt(request.params("id"));
         boolean success = service.delete(id);
         if(success) {
-            flash.setFlashMessage("Contact deleted successfully", "success", request.session());
+            session.setFlashMessage("Contact deleted successfully", "success", request.session());
         } else {
-            flash.setFlashMessage("Failed to delete contact", "error", request.session());
+            session.setFlashMessage("Failed to delete contact", "error", request.session());
         }
         if(acceptsJson(request)) {
             logger.info("Sending JSON response");

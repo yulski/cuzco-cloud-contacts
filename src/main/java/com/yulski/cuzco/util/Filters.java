@@ -18,13 +18,13 @@ public class Filters {
 
     private static final Logger logger = LoggerFactory.getLogger(Filters.class.getCanonicalName());
 
-    private FlashMessageManager flash;
+    private SessionManager session;
     private Gson gson;
 
     public final Filter loggedIn = (Request request, Response response) -> {
         if(request.session().attribute("user") == null) {
             logger.error("Anon attempting to access page meant for logged in users");
-            flash.setFlashMessage("You are not logged in", "error", request.session());
+            session.setFlashMessage("You are not logged in", "error", request.session());
             if(acceptsJson(request)) {
                 logger.info("Halting request and returning empty JSON");
                 halt(400, gson.toJson(new JsonObject()));
@@ -39,7 +39,7 @@ public class Filters {
     public final Filter notLoggedIn = (Request request, Response response) -> {
         if(request.session().attribute("user") != null) {
             logger.error("Logged in user attempting to access page meant for anons");
-            flash.setFlashMessage("You are already logged in", "error", request.session());
+            session.setFlashMessage("You are already logged in", "error", request.session());
             if(acceptsJson(request)) {
                 logger.info("Halting request and returning empty JSON");
                 halt(400, gson.toJson(new JsonObject()));
@@ -52,12 +52,12 @@ public class Filters {
     };
 
     public final Filter contactAccess = (Request request, Response response) -> {
-        User user = request.session().attribute("user");
+        User user = session.getUser(request.session());
         int id = Integer.parseInt(request.params("id"));
         Contact contact = new ContactService().getOne(id);
         if(contact == null || contact.getUser().getId() != user.getId()) {
             logger.error("User trying to access contact they are not authorized to view");
-            flash.setFlashMessage("You don't have a contact with id " + id, "error", request.session());
+            session.setFlashMessage("You don't have a contact with id " + id, "error", request.session());
             if(acceptsJson(request)) {
                 logger.info("Halting request and returning empty JSON");
                 halt(400, gson.toJson(new JsonObject()));
@@ -69,8 +69,8 @@ public class Filters {
         }
     };
 
-    public Filters(FlashMessageManager flash) {
-        this.flash = flash;
+    public Filters(SessionManager session) {
+        this.session = session;
         this.gson = new Gson();
     }
 }
