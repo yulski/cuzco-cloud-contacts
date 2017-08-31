@@ -31,11 +31,11 @@ public class Cuzco {
         before(Paths.DELETE_PROFILE, filters.loggedIn);
         before(Paths.REGISTRATION, filters.notLoggedIn);
 
-        before(Paths.CONTACT, filters.loggedIn);
+        before(Paths.CONTACT, filters.loggedIn, filters.contactAccess);
         before(Paths.USER_CONTACTS, filters.loggedIn);
-        before(Paths.EDIT_CONTACT, filters.loggedIn);
+        before(Paths.EDIT_CONTACT, filters.loggedIn, filters.contactAccess);
         before(Paths.CREATE_CONTACT, filters.loggedIn);
-        before(Paths.DELETE_CONTACT, filters.loggedIn);
+        before(Paths.DELETE_CONTACT, filters.loggedIn, filters.contactAccess);
 
         // default routes
         get(Paths.LANDING_PAGE, defaultController::getLandingPage);

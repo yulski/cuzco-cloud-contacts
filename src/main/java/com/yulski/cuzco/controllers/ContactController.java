@@ -31,18 +31,6 @@ public class ContactController extends ModelController<Contact, ContactService> 
         logger.info("Get one contact");
         int id = Integer.parseInt(request.params("id"));
         Contact contact = service.getOne(id);
-        if(contact == null) {
-            logger.error("No contact found for id " + id);
-            flash.setFlashMessage("No contact with id " + id, "error", request.session());
-            if(acceptsJson(request)) {
-                logger.info("Returning empty JSON");
-                return gson.toJson(new JsonObject());
-            } else {
-                logger.info("Redirecting to dashboard");
-                response.redirect(Paths.DASHBOARD);
-                return "";
-            }
-        }
         if(acceptsJson(request)) {
             logger.info("Returning contact as JSON");
             return gson.toJson(contact);
@@ -74,18 +62,6 @@ public class ContactController extends ModelController<Contact, ContactService> 
         logger.info("Get edit contact form");
         int id = Integer.parseInt(request.params("id"));
         Contact contact = service.getOne(id);
-        if(contact == null) {
-            logger.error("No contact found for id " + id);
-            flash.setFlashMessage("No contact with id " + id, "error", request.session());
-            if(acceptsJson(request)) {
-                logger.info("Returning empty JSON");
-                return gson.toJson(new JsonObject());
-            } else {
-                logger.info("Redirecting to dashboard");
-                response.redirect(Paths.DASHBOARD);
-                return "";
-            }
-        }
         logger.info("Rendering contact edit page");
         Map<String, Object> model = new HashMap<>();
         model.put("contact", contact);
@@ -97,18 +73,6 @@ public class ContactController extends ModelController<Contact, ContactService> 
         logger.info("Edit a contact");
         int id = Integer.parseInt(request.params("id"));
         Contact oldContact = service.getOne(id);
-        if(oldContact == null) {
-            logger.error("No contact found for id " + id);
-            flash.setFlashMessage("No contact with id " + id, "error", request.session());
-            if(acceptsJson(request)) {
-                logger.info("Returning empty JSON");
-                return gson.toJson(new JsonObject());
-            } else {
-                logger.info("Redirecting to dashboard");
-                response.redirect(Paths.DASHBOARD);
-                return "";
-            }
-        }
         Contact contact;
         if(isJson(request)) {
             logger.info("Processing JSON request to edit contact");
