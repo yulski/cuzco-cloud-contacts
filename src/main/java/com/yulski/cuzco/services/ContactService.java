@@ -23,7 +23,11 @@ public class ContactService extends Service<Contact> {
             statement.setInt(1, id);
             logger.info("ContactService executing query: '" + sql + "'");
             ResultSet resultSet = statement.executeQuery();
-            resultSet.next();
+            boolean hasResult = resultSet.next();
+            if(!hasResult) {
+                logger.info("Query returned empty result set");
+                return null;
+            }
             return Contact.builder()
                     .id(id)
                     .name(resultSet.getString(Contact.Contract.NAME_COLUMN))
@@ -46,13 +50,19 @@ public class ContactService extends Service<Contact> {
             logger.info("ContactService executing query: '" + sql + "'");
             ResultSet resultSet = statement.executeQuery();
             UserService userService = new UserService();
-            while(resultSet.next()) {
-                allContacts.add(Contact.builder()
-                        .id(resultSet.getInt(Contact.Contract.ID_COLUMN))
-                        .name(resultSet.getString(Contact.Contract.NAME_COLUMN))
-                        .phoneNumber(resultSet.getString(Contact.Contract.PHONE_NUMBER_COLUMN))
-                        .user(userService.getOne(resultSet.getInt(Contact.Contract.USER_ID_COLUMN)))
-                        .build());
+            boolean hasResult = resultSet.next();
+            if(!hasResult) {
+                logger.info("Query returned empty result set");
+                return null;
+            } else {
+                do {
+                    allContacts.add(Contact.builder()
+                            .id(resultSet.getInt(Contact.Contract.ID_COLUMN))
+                            .name(resultSet.getString(Contact.Contract.NAME_COLUMN))
+                            .phoneNumber(resultSet.getString(Contact.Contract.PHONE_NUMBER_COLUMN))
+                            .user(userService.getOne(resultSet.getInt(Contact.Contract.USER_ID_COLUMN)))
+                            .build());
+                } while (resultSet.next());
             }
         } catch (SQLException e) {
             logger.error(e.getMessage(), e);
@@ -124,13 +134,19 @@ public class ContactService extends Service<Contact> {
             statement.setInt(1, user.getId());
             logger.info("ContactService executing query: '" + sql + "'");
             ResultSet resultSet = statement.executeQuery();
-            while(resultSet.next()) {
-                userContacts.add(Contact.builder()
-                        .id(resultSet.getInt(Contact.Contract.ID_COLUMN))
-                        .name(resultSet.getString(Contact.Contract.NAME_COLUMN))
-                        .phoneNumber(resultSet.getString(Contact.Contract.PHONE_NUMBER_COLUMN))
-                        .user(user)
-                        .build());
+            boolean hasResult = resultSet.next();
+            if(!hasResult) {
+                logger.info("Query returned empty result set");
+                return null;
+            } else {
+                do {
+                    userContacts.add(Contact.builder()
+                            .id(resultSet.getInt(Contact.Contract.ID_COLUMN))
+                            .name(resultSet.getString(Contact.Contract.NAME_COLUMN))
+                            .phoneNumber(resultSet.getString(Contact.Contract.PHONE_NUMBER_COLUMN))
+                            .user(user)
+                            .build());
+                } while (resultSet.next());
             }
         } catch (SQLException e) {
             logger.error(e.getMessage(), e);

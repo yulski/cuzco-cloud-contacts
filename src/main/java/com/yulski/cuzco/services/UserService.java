@@ -24,7 +24,11 @@ public class UserService extends Service<User> {
             statement.setInt(1, id);
             logger.info("Executing query: '" + sql + "'");
             ResultSet resultSet = statement.executeQuery();
-            resultSet.next();
+            boolean hasResult = resultSet.next();
+            if(!hasResult) {
+                logger.info("Query returned empty result set");
+                return null;
+            }
             return User.builder()
                     .id(id)
                     .email(resultSet.getString(User.Contract.EMAIL_COLUMN))
@@ -45,7 +49,11 @@ public class UserService extends Service<User> {
             statement.setString(1, email);
             logger.info("Executing query: '" + sql + "'");
             ResultSet resultSet = statement.executeQuery();
-            resultSet.next();
+            boolean hasResult = resultSet.next();
+            if(!hasResult) {
+                logger.info("Query returned empty result set");
+                return null;
+            }
             return User.builder()
                     .id(resultSet.getInt(User.Contract.ID_COLUMN))
                     .email(resultSet.getString(User.Contract.EMAIL_COLUMN))
@@ -67,12 +75,18 @@ public class UserService extends Service<User> {
             PreparedStatement statement = connection.prepareStatement(sql);
             logger.info("Executing query: '" + sql + "'");
             ResultSet resultSet = statement.executeQuery();
-            while(resultSet.next()) {
-                allUsers.add(User.builder()
-                        .id(resultSet.getInt(User.Contract.ID_COLUMN))
-                        .email(resultSet.getString(User.Contract.EMAIL_COLUMN))
-                        .password(resultSet.getString(User.Contract.PASSWORD_COLUMN))
-                        .build());
+            boolean hasResult = resultSet.next();
+            if(!hasResult) {
+                logger.info("Query returned empty result set");
+                return null;
+            } else {
+                do {
+                    allUsers.add(User.builder()
+                            .id(resultSet.getInt(User.Contract.ID_COLUMN))
+                            .email(resultSet.getString(User.Contract.EMAIL_COLUMN))
+                            .password(resultSet.getString(User.Contract.PASSWORD_COLUMN))
+                            .build());
+                } while (resultSet.next());
             }
         } catch (SQLException e) {
             logger.error(e.getMessage(), e);
