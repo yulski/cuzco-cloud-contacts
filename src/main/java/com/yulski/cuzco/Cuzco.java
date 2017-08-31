@@ -46,11 +46,8 @@ public class Cuzco {
         post(Paths.LOGIN, userController::login);
         get(Paths.LOGOUT, userController::logout);
         get(Paths.EDIT_PROFILE, userController::getEditForm);
-        // TODO change to PUT
         post(Paths.EDIT_PROFILE, userController::edit);
         get(Paths.DELETE_PROFILE, userController::getDeleteForm);
-        // TODO change to delete
-        // TODO add a password confirmation page before the user is allowed to delete account. this page can be reused for different things, just redirect to different page after
         post(Paths.DELETE_PROFILE, userController::delete);
         get(Paths.REGISTRATION, userController::getCreateForm);
         post(Paths.REGISTRATION, userController::create);
@@ -59,12 +56,10 @@ public class Cuzco {
         get(Paths.CONTACT, contactController::getOne);
         get(Paths.USER_CONTACTS, contactController::getAllForUser);
         get(Paths.EDIT_CONTACT, contactController::getEditForm);
-        // TODO change to put
         post(Paths.EDIT_CONTACT, contactController::edit);
         get(Paths.CREATE_CONTACT, contactController::getCreateForm);
         post(Paths.CREATE_CONTACT, contactController::create);
         get(Paths.DELETE_CONTACT, contactController::getDeleteForm);
-        // TODO change to delete
         post(Paths.DELETE_CONTACT, contactController::delete);
     }
 
