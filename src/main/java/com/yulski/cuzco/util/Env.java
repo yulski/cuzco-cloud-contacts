@@ -6,16 +6,16 @@ import java.util.Map;
 public class Env {
 
     // app config
-    private static final String PORT = "PORT";
+    static final String PORT = "PORT";
 
     // database config
-    private static final String DB_HOST = "DB_HOST";
-    private static final String DB_PORT = "DB_PORT";
-    private static final String DB_NAME = "DB_NAME";
-    private static final String DB_SCHEMA = "DB_SCHEMA";
-    private static final String DB_USER = "DB_USER";
-    private static final String DB_PASS = "DB_PASS";
-    private static final String TEMPLATES_DIR = "TEMPLATES_DIR";
+    static final String DB_HOST = "DB_HOST";
+    static final String DB_PORT = "DB_PORT";
+    static final String DB_NAME = "DB_NAME";
+    static final String DB_SCHEMA = "DB_SCHEMA";
+    static final String DB_USER = "DB_USER";
+    static final String DB_PASS = "DB_PASS";
+    static final String TEMPLATES_DIR = "TEMPLATES_DIR";
 
     private static final Map<String, String> CONFIG_VARS = new HashMap<>();
 

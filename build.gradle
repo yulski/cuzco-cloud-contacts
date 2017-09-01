@@ -16,6 +16,7 @@ repositories {
 
 dependencies {
     testCompile group: 'junit', name: 'junit', version: '4.12'
+    testCompile group: 'com.github.stefanbirkner', name: 'system-rules', version: '1.16.0'
     compile group: 'com.sparkjava', name: 'spark-core', version: '2.6.0'
     compile group: 'org.slf4j', name: 'slf4j-simple', version: '1.7.25'
     compile group: 'com.sparkjava', name: 'spark-template-jtwig', version: '2.5.5'
