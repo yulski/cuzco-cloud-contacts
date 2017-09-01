@@ -31,14 +31,7 @@ public class Filters {
             if(session.getUser(request.session()) == null) {
                 logger.error("Anon attempting to access page meant for logged in users");
                 session.setFlashMessage("You are not logged in", "error", request.session());
-                if(acceptsJson(request)) {
-                    logger.info("Halting request and returning empty JSON");
-                    halt(400, gson.toJson(new JsonObject()));
-                } else {
-                    logger.info("Redirecting to landing page");
-                    response.redirect(redirectPath);
-                    halt(400);
-                }
+                handleFiltering(request, response, redirectPath);
             }
         };
     }
@@ -48,14 +41,7 @@ public class Filters {
             if(session.getUser(request.session()) != null) {
                 logger.error("Logged in user attempting to access page meant for anons");
                 session.setFlashMessage("You are already logged in", "error", request.session());
-                if(acceptsJson(request)) {
-                    logger.info("Halting request and returning empty JSON");
-                    halt(400, gson.toJson(new JsonObject()));
-                } else {
-                    logger.info("Redirecting to dashboard");
-                    response.redirect(redirectPath);
-                    halt(400);
-                }
+                handleFiltering(request, response, redirectPath);
             }
         };
     }
@@ -68,15 +54,19 @@ public class Filters {
             if(contact == null || contact.getUser().getId() != user.getId()) {
                 logger.error("User trying to access contact they are not authorized to view");
                 session.setFlashMessage("You don't have a contact with id " + id, "error", request.session());
-                if(acceptsJson(request)) {
-                    logger.info("Halting request and returning empty JSON");
-                    halt(400, gson.toJson(new JsonObject()));
-                } else {
-                    logger.info("Redirecting to dashboard");
-                    response.redirect(redirectPath);
-                    halt(400);
-                }
+                handleFiltering(request, response, redirectPath);
             }
         };
+    }
+
+    private void handleFiltering(Request request, Response response, String redirectPath) throws Exception {
+        if(acceptsJson(request)) {
+            logger.info("Halting request and returning empty JSON");
+            throw halt(400, gson.toJson(new JsonObject()));
+        } else {
+            logger.info("Redirecting to " + redirectPath);
+            response.redirect(redirectPath);
+            throw halt(400);
+        }
     }
 }
