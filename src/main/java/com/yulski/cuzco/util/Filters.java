@@ -28,7 +28,7 @@ public class Filters {
 
     public Filter loggedIn(final String redirectPath) {
         return (Request request, Response response) -> {
-            if(request.session().attribute("user") == null) {
+            if(session.getUser(request.session()) == null) {
                 logger.error("Anon attempting to access page meant for logged in users");
                 session.setFlashMessage("You are not logged in", "error", request.session());
                 if(acceptsJson(request)) {
@@ -45,7 +45,7 @@ public class Filters {
 
     public Filter notLoggedIn(final String redirectPath) {
         return (Request request, Response response) -> {
-            if(request.session().attribute("user") != null) {
+            if(session.getUser(request.session()) != null) {
                 logger.error("Logged in user attempting to access page meant for anons");
                 session.setFlashMessage("You are already logged in", "error", request.session());
                 if(acceptsJson(request)) {
