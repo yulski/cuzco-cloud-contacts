@@ -28,15 +28,18 @@ public class UserController extends ModelController<User, UserService> {
 
     private static final Logger logger = LoggerFactory.getLogger(UserController.class.getCanonicalName());
 
-    public UserController(Renderer renderer, SessionManager flash) {
-        super(renderer, flash);
+    private ContactService contactService;
+
+    public UserController(Renderer renderer, SessionManager flash, UserService service, ContactService contactService) {
+        super(renderer, flash, service);
+        this.contactService = contactService;
     }
 
     public String getDashboard(Request request, Response response) {
         logger.info("Get user dashboard");
         User user = session.getUser(request.session());
         logger.info("Getting user contacts");
-        List<Contact> contacts = new ContactService().getContactsForUser(user); // TODO fix this - this shouldn't be directly instantiating a ContactService
+        List<Contact> contacts = contactService.getContactsForUser(user);
         Map<String, Object> model = new HashMap<>();
         model.put("contacts", contacts);
         return render(request, Templates.DASHBOARD, model);
@@ -302,8 +305,4 @@ public class UserController extends ModelController<User, UserService> {
         }
     }
 
-    @Override
-    protected UserService getService() {
-        return new UserService();
-    }
 }

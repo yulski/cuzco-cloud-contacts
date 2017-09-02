@@ -1,5 +1,6 @@
 package com.yulski.cuzco.services;
 
+import com.yulski.cuzco.db.Db;
 import com.yulski.cuzco.models.Contact;
 import com.yulski.cuzco.models.User;
 import org.slf4j.Logger;
@@ -11,7 +12,15 @@ import java.util.List;
 
 public class ContactService extends Service<Contact> {
 
-    protected static final Logger logger = LoggerFactory.getLogger(ContactService.class.getCanonicalName());
+    private static final Logger logger = LoggerFactory.getLogger(ContactService.class.getCanonicalName());
+
+    // TODO I don't like this - services shouldn't be referencing each other
+    private UserService userService;
+
+    public ContactService(Db db, UserService userService) {
+        super(db);
+        this.userService = userService;
+    }
 
     @Override
     public Contact getOne(int id) {
@@ -32,7 +41,7 @@ public class ContactService extends Service<Contact> {
                     .id(id)
                     .name(resultSet.getString(Contact.Contract.NAME_COLUMN))
                     .phoneNumber(resultSet.getString(Contact.Contract.PHONE_NUMBER_COLUMN))
-                    .user(new UserService().getOne(resultSet.getInt(Contact.Contract.USER_ID_COLUMN)))
+                    .user(userService.getOne(resultSet.getInt(Contact.Contract.USER_ID_COLUMN)))
                     .build();
         } catch (SQLException e) {
             logger.error(e.getMessage(), e);
@@ -49,7 +58,6 @@ public class ContactService extends Service<Contact> {
             PreparedStatement statement = connection.prepareStatement(sql);
             logger.info("ContactService executing query: '" + sql + "'");
             ResultSet resultSet = statement.executeQuery();
-            UserService userService = new UserService();
             boolean hasResult = resultSet.next();
             if(!hasResult) {
                 logger.info("Query returned empty result set");

@@ -15,7 +15,11 @@ public abstract class Service<T extends Model> {
 
     public static final String SCHEMA = Env.getDbSchema();
 
-    protected static final Db db = new Db();
+    protected Db db;
+
+    public Service(Db db) {
+        this.db = db;
+    }
 
     public abstract T getOne(int id);
 

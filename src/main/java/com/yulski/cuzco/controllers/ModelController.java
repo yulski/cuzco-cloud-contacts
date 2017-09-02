@@ -9,11 +9,12 @@ import spark.Response;
 
 public abstract class ModelController<T extends Model, V extends Service<T>> extends Controller {
 
-    public ModelController(Renderer renderer, SessionManager session) {
-        super(renderer, session);
-    }
+    protected V service;
 
-    protected V service = getService();
+    public ModelController(Renderer renderer, SessionManager session, V service) {
+        super(renderer, session);
+        this.service = service;
+    }
 
     public abstract String getOne(Request request, Response response);
 
@@ -28,7 +29,5 @@ public abstract class ModelController<T extends Model, V extends Service<T>> ext
     public abstract String getDeleteForm(Request request, Response response);
 
     public abstract String delete(Request request, Response response);
-
-    protected abstract V getService();
 
 }

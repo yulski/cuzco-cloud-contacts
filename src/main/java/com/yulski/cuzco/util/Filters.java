@@ -46,11 +46,11 @@ public class Filters {
         };
     }
 
-    public Filter contactAccess(final String redirectPath) {
+    public Filter contactAccess(final String redirectPath, ContactService contactService) {
         return (Request request, Response response) -> {
             User user = session.getUser(request.session());
             int id = Integer.parseInt(request.params("id"));
-            Contact contact = new ContactService().getOne(id);
+            Contact contact = contactService.getOne(id);
             if(contact == null || contact.getUser().getId() != user.getId()) {
                 logger.error("User trying to access contact they are not authorized to view");
                 session.setFlashMessage("You don't have a contact with id " + id, "error", request.session());

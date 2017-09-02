@@ -21,8 +21,8 @@ public class ContactController extends ModelController<Contact, ContactService> 
 
     private static final Logger logger = LoggerFactory.getLogger(ContactController.class.getCanonicalName());
 
-    public ContactController(Renderer renderer, SessionManager session) {
-        super(renderer, session);
+    public ContactController(Renderer renderer, SessionManager session, ContactService service) {
+        super(renderer, session, service);
     }
 
     @Override
@@ -172,8 +172,4 @@ public class ContactController extends ModelController<Contact, ContactService> 
         }
     }
 
-    @Override
-    protected ContactService getService() {
-        return new ContactService();
-    }
 }

@@ -1,5 +1,6 @@
 package com.yulski.cuzco.services;
 
+import com.yulski.cuzco.db.Db;
 import com.yulski.cuzco.models.Contact;
 import com.yulski.cuzco.models.User;
 import org.mindrot.jbcrypt.BCrypt;
@@ -12,7 +13,11 @@ import java.util.List;
 
 public class UserService extends Service<User> {
 
-    protected static final Logger logger = LoggerFactory.getLogger(UserService.class.getCanonicalName());
+    private static final Logger logger = LoggerFactory.getLogger(UserService.class.getCanonicalName());
+
+    public UserService(Db db) {
+        super(db);
+    }
 
     @Override
     public User getOne(int id) {
