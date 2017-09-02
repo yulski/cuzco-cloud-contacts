@@ -17,9 +17,11 @@ public class Renderer {
     private Environment env;
     private String templatesDir;
     private Map<String, Object> baseModel;
+    private JTwigFunctions jTwigFunctions;
 
-    public Renderer(String templatesDir) {
+    public Renderer(String templatesDir, JTwigFunctions jTwigFunctions) {
         this.templatesDir = templatesDir;
+        this.jTwigFunctions = jTwigFunctions;
         init();
     }
 
@@ -27,8 +29,8 @@ public class Renderer {
         EnvironmentConfiguration envConfig = EnvironmentConfigurationBuilder
                 .configuration()
                     .functions()
-                        .add(JTwigFunctions.path)
-                        .add(JTwigFunctions.toString)
+                        .add(jTwigFunctions.getPath())
+                        .add(jTwigFunctions.getToString())
                     .and()
                 .build();
         EnvironmentFactory envFactory = new EnvironmentFactory();

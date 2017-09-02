@@ -21,8 +21,11 @@ public class ContactController extends ModelController<Contact, ContactService> 
 
     private static final Logger logger = LoggerFactory.getLogger(ContactController.class.getCanonicalName());
 
-    public ContactController(Renderer renderer, SessionManager session, ContactService service) {
+    private PathGenerator pathGenerator;
+
+    public ContactController(Renderer renderer, SessionManager session, ContactService service, PathGenerator pathGenerator) {
         super(renderer, session, service);
+        this.pathGenerator = pathGenerator;
     }
 
     @Override
@@ -97,7 +100,7 @@ public class ContactController extends ModelController<Contact, ContactService> 
             return getOutcomeJson(success);
         } else {
             logger.info("Redirecting to edited contact page");
-            response.redirect(Paths.generatePath(Paths.CONTACT, Integer.toString(id)));
+            response.redirect(pathGenerator.generatePath(Paths.CONTACT, Integer.toString(id)));
             return "";
         }
     }
@@ -136,7 +139,7 @@ public class ContactController extends ModelController<Contact, ContactService> 
             return getOutcomeJson(success);
         } else {
             logger.info("Redirecting to the newly created contact page");
-            response.redirect(Paths.generatePath(Paths.CONTACT, Integer.toString(createdId)));
+            response.redirect(pathGenerator.generatePath(Paths.CONTACT, Integer.toString(createdId)));
             return "";
         }
     }

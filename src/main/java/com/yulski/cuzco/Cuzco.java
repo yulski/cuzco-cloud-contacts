@@ -13,7 +13,9 @@ import static spark.Spark.*;
 public class Cuzco {
 
     public static void main(String[] args) {
-        Renderer renderer = new Renderer(Env.getTemplatesDir());
+        PathGenerator pathGenerator = new PathGenerator();
+        JTwigFunctions jTwigFunctions = new JTwigFunctions(pathGenerator);
+        Renderer renderer = new Renderer(Env.getTemplatesDir(), jTwigFunctions);
         SessionManager session = new SessionManager();
 
         Db db = new Db();
@@ -23,7 +25,7 @@ public class Cuzco {
 
         DefaultController defaultController = new DefaultController(renderer, session);
         UserController userController = new UserController(renderer, session, userService, contactService);
-        ContactController contactController = new ContactController(renderer, session, contactService);
+        ContactController contactController = new ContactController(renderer, session, contactService, pathGenerator);
 
         port(Env.getPort());
 
