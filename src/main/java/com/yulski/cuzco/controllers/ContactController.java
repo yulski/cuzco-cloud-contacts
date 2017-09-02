@@ -85,7 +85,7 @@ public class ContactController extends ModelController<Contact, ContactService> 
             contact = Contact.builder()
                     .id(id)
                     .name(request.queryParams("name"))
-                    .phoneNumber(request.queryParams("phone-number"))
+                    .phoneNumber(request.queryParams("phoneNumber"))
                     .user(oldContact.getUser())
                     .build();
         }

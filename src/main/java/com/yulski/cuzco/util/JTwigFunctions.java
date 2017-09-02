@@ -4,7 +4,6 @@ import org.jtwig.functions.FunctionRequest;
 import org.jtwig.functions.JtwigFunction;
 
 import java.util.*;
-import java.util.*;
 
 public class JTwigFunctions {
 
