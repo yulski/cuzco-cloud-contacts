@@ -30,11 +30,23 @@ public class JTwigFunctions {
             @Override
             public Object execute(FunctionRequest request) {
                 List<Object> args = request.getArguments();
+                if(args == null || args.isEmpty()) {
+                    return "";
+                }
                 String path = (String) args.get(0);
-                if (args.size() == 1 || args.get(1) == null || ((Map<String, String>) args.get(1)).size() == 0) {
+                if(args.size() == 1 || args.get(1) == null) {
                     return path;
                 }
-                Map<String, String> params = (Map<String, String>) args.get(1);
+                Map<String, String> params;
+                try {
+                    params = (Map<String, String>) args.get(1);
+                } catch(ClassCastException e) {
+                    e.printStackTrace();
+                    return path;
+                }
+                if (params.size() == 0) {
+                    return path;
+                }
                 return pathGenerator.generatePath(path, params);
             }
         };
@@ -56,7 +68,14 @@ public class JTwigFunctions {
 
             @Override
             public Object execute(FunctionRequest request) {
-                Object obj = request.getArguments().get(0);
+                List<Object> args = request.getArguments();
+                if(args == null || args.isEmpty()) {
+                    return "";
+                }
+                Object obj = args.get(0);
+                if(obj == null) {
+                    return "";
+                }
                 return obj.toString();
             }
         };
