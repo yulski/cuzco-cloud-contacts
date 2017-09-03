@@ -5,11 +5,13 @@ import spark.Request;
 public class RequestUtil {
 
     public static boolean acceptsJson(Request request) {
-        return request.headers("Accept").contains("application/json");
+        String acceptHeader = request.headers("Accept");
+        return acceptHeader != null && acceptHeader.contains("application/json");
     }
 
     public static boolean isJson(Request request) {
-        return request.headers("Content-Type").contains("application/json");
+        String contentTypeHeader = request.headers("Content-Type");
+        return contentTypeHeader != null && contentTypeHeader.contains("application/json");
     }
 
 }
