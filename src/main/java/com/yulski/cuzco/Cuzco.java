@@ -15,7 +15,9 @@ public class Cuzco {
     public static void main(String[] args) {
         PathGenerator pathGenerator = new PathGenerator();
         JTwigFunctions jTwigFunctions = new JTwigFunctions(pathGenerator);
-        Renderer renderer = new Renderer(Env.getTemplatesDir(), jTwigFunctions);
+        ModelFactory modelFactory = new ModelFactory();
+        TemplateFactory templateFactory = new TemplateFactory(Env.getTemplatesDir(), jTwigFunctions);
+        Renderer renderer = new Renderer(modelFactory, templateFactory);
         SessionManager session = new SessionManager();
 
         Db db = new Db();
