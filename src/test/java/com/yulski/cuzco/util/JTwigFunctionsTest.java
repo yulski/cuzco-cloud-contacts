@@ -1,17 +1,30 @@
 package com.yulski.cuzco.util;
 
 import org.jtwig.functions.FunctionRequest;
+import org.jtwig.functions.JtwigFunction;
 import org.junit.Test;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.*;
 
 public class JTwigFunctionsTest {
+
+    @Test
+    public void pathFunctionHasExpectedNameAndAliasesTest() {
+        PathGenerator mockPathGenerator = mock(PathGenerator.class);
+        JTwigFunctions jTwigFunctions = new JTwigFunctions(mockPathGenerator);
+
+        JtwigFunction function = jTwigFunctions.getPath();
+        String name = function.name();
+        Collection<String> aliases = function.aliases();
+
+        assertEquals("path", name);
+        assertEquals(1, aliases.size());
+        assertTrue(aliases.contains("path"));
+    }
 
     @Test
     public void pathFunctionNullArgsShouldReturnEmptyStringTest() {
@@ -122,6 +135,20 @@ public class JTwigFunctionsTest {
         jTwigFunctions.getPath().execute(mockFunctionRequest);
 
         verify(mockPathGenerator, times(1)).generatePath(path, params);
+    }
+
+    @Test
+    public void toStringFunctionHasExpectedNameAndAliasesTest() {
+        PathGenerator mockPathGenerator = mock(PathGenerator.class);
+        JTwigFunctions jTwigFunctions = new JTwigFunctions(mockPathGenerator);
+
+        JtwigFunction function = jTwigFunctions.getToString();
+        String name = function.name();
+        Collection<String> aliases = function.aliases();
+
+        assertEquals("toString", name);
+        assertEquals(1, aliases.size());
+        assertTrue(aliases.contains("toString"));
     }
 
     @Test
