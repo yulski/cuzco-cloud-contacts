@@ -1,6 +1,5 @@
 package com.yulski.cuzco.db;
 
-import com.yulski.cuzco.util.Env;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -12,17 +11,20 @@ public class Db {
 
     private Connection connection;
 
-    public Db() {
+    private DbConfig config;
+
+    public Db(DbConfig config) {
+        this.config = config;
         try {
             Class.forName("org.postgresql.Driver");
             connection = DriverManager.getConnection(
                     String.format("jdbc:postgresql://%s:%d/%s",
-                            Env.getDbHost(),
-                            Env.getDbPort(),
-                            Env.getDbName()
+                            config.getHost(),
+                            config.getPort(),
+                            config.getName()
                     ),
-                    Env.getDbUser(),
-                    Env.getDbPass());
+                    config.getUser(),
+                    config.getPass());
             logger.info("Db connected to database successfully");
         } catch (ClassNotFoundException | SQLException e) {
             logger.error(e.getMessage(), e);
@@ -31,5 +33,9 @@ public class Db {
 
     public Connection getConnection() {
         return connection;
+    }
+
+    public DbConfig getConfig() {
+        return config;
     }
 }

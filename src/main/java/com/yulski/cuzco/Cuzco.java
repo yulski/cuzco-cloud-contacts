@@ -4,6 +4,7 @@ import com.yulski.cuzco.controllers.ContactController;
 import com.yulski.cuzco.controllers.DefaultController;
 import com.yulski.cuzco.controllers.UserController;
 import com.yulski.cuzco.db.Db;
+import com.yulski.cuzco.db.DbConfig;
 import com.yulski.cuzco.services.ContactService;
 import com.yulski.cuzco.services.UserService;
 import com.yulski.cuzco.util.*;
@@ -20,7 +21,9 @@ public class Cuzco {
         Renderer renderer = new Renderer(modelFactory, templateFactory);
         SessionManager session = new SessionManager();
 
-        Db db = new Db();
+        DbConfig dbConfig = new DbConfig(Env.getDbHost(), Env.getDbPort(), Env.getDbName(), Env.getDbSchema(),
+                Env.getDbUser(), Env.getDbPass());
+        Db db = new Db(dbConfig);
 
         UserService userService = new UserService(db);
         ContactService contactService = new ContactService(db, userService);

@@ -23,7 +23,7 @@ public class UserService extends Service<User> {
     public User getOne(int id) {
         Connection connection = db.getConnection();
         String sql = String.format("SELECT * FROM \"%s\".%s WHERE %s = ? LIMIT 1",
-                SCHEMA, User.Contract.TABLE_NAME, User.Contract.ID_COLUMN);
+                schema, User.Contract.TABLE_NAME, User.Contract.ID_COLUMN);
         try {
             PreparedStatement statement = connection.prepareStatement(sql);
             statement.setInt(1, id);
@@ -48,7 +48,7 @@ public class UserService extends Service<User> {
     public User getOneByEmail(String email) {
         Connection connection = db.getConnection();
         String sql = String.format("SELECT * FROM \"%s\".%s WHERE %s = ? LIMIT 1",
-                SCHEMA, User.Contract.TABLE_NAME, User.Contract.EMAIL_COLUMN);
+                schema, User.Contract.TABLE_NAME, User.Contract.EMAIL_COLUMN);
         try {
             PreparedStatement statement = connection.prepareStatement(sql);
             statement.setString(1, email);
@@ -74,7 +74,7 @@ public class UserService extends Service<User> {
     public List<User> getAll() {
         Connection connection = db.getConnection();
         String sql = String.format("SELECT * FROM \"%s\".%s",
-            SCHEMA, User.Contract.TABLE_NAME);
+                schema, User.Contract.TABLE_NAME);
         List<User> allUsers = new ArrayList<>();
         try {
             PreparedStatement statement = connection.prepareStatement(sql);
@@ -103,7 +103,7 @@ public class UserService extends Service<User> {
     public int create(User user) {
         Connection connection = db.getConnection();
         String sql = String.format("INSERT INTO \"%s\".%s (%s, %s) VALUES (?, ?)",
-                SCHEMA, User.Contract.TABLE_NAME, User.Contract.EMAIL_COLUMN, User.Contract.PASSWORD_COLUMN);
+                schema, User.Contract.TABLE_NAME, User.Contract.EMAIL_COLUMN, User.Contract.PASSWORD_COLUMN);
         try {
             String hashedPassword = BCrypt.hashpw(user.getPassword(), BCrypt.gensalt());
             PreparedStatement statement = connection.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
@@ -121,7 +121,7 @@ public class UserService extends Service<User> {
     public boolean update(User user) {
         Connection connection = db.getConnection();
         String sql = String.format("UPDATE \"%s\".%s SET %s = ?, %s = ? WHERE %s = ?",
-                SCHEMA, User.Contract.TABLE_NAME, User.Contract.EMAIL_COLUMN, User.Contract.PASSWORD_COLUMN,
+                schema, User.Contract.TABLE_NAME, User.Contract.EMAIL_COLUMN, User.Contract.PASSWORD_COLUMN,
                 User.Contract.ID_COLUMN);
         try {
             PreparedStatement statement = connection.prepareStatement(sql);
@@ -140,9 +140,9 @@ public class UserService extends Service<User> {
     public boolean delete(int id) {
         Connection connection = db.getConnection();
         String contactSql = String.format("DELETE FROM \"%s\".%s WHERE %s = ?",
-                SCHEMA, Contact.Contract.TABLE_NAME, Contact.Contract.USER_ID_COLUMN);
+                schema, Contact.Contract.TABLE_NAME, Contact.Contract.USER_ID_COLUMN);
         String userSql = String.format("DELETE FROM \"%s\".%s WHERE %s = ?",
-                SCHEMA, User.Contract.TABLE_NAME, User.Contract.ID_COLUMN);
+                schema, User.Contract.TABLE_NAME, User.Contract.ID_COLUMN);
         try {
             connection.setAutoCommit(false);
             PreparedStatement contactStatement = connection.prepareStatement(contactSql);

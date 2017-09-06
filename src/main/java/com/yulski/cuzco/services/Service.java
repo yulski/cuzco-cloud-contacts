@@ -13,12 +13,13 @@ public abstract class Service<T extends Model> {
 
     public static final int UPDATE_FAILURE = -1;
 
-    public static final String SCHEMA = Env.getDbSchema();
+    public String schema;
 
     protected Db db;
 
     public Service(Db db) {
         this.db = db;
+        schema = db.getConfig().getSchema();
     }
 
     public abstract T getOne(int id);
