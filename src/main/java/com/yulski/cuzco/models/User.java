@@ -11,7 +11,8 @@ public class User extends Model {
     private String password;
 
     public boolean isValid() {
-        return email != null &&
+        return id > 0 &&
+                email != null &&
                 email.length() > 0 &&
                 password != null &&
                 password.length() > 0;

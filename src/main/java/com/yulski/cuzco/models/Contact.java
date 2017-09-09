@@ -12,7 +12,8 @@ public class Contact extends Model {
     private User user;
 
     public boolean isValid() {
-        return name != null &&
+        return id > 0 &&
+                name != null &&
                 name.length() > 0 &&
                 user != null &&
                 user.isValid();
